@@ -1,0 +1,7 @@
+*.xcodeproj
+*.vcxproj*
+*.user
+*.sln
+*.filters
+*.config
+.DS_STORE
