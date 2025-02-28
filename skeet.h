@@ -57,23 +57,31 @@ public:
    void addPoints(Points point) { points.push_back(point); }
    void addEffect(Effect* effect) { effects.push_back(effect); }
    int birdsSize() const { return (int)birds.size(); }
-   std::list<Bird*>::iterator getBirdsStart() { return birds.begin(); }
-   std::list<Bird*>::iterator getBirdsEnd() { return birds.end(); }
+
+   // Birds
+   std::list<BirdStorage*>::const_iterator getBirdsStart() const { return birds.begin(); }
+   // std::list<BirdStorage*>::iterator getBirdsEnd() const  { return birds.end();   }
+   // std::list<BirdStorage*>::iterator removeBird(std::list<BirdStorage*>::iterator it) { return birds.erase(it); }
+   void newBird(BirdStorage* bird) { birds.push_back(bird); }
+
    std::list<Bullet*>::iterator getBulletsStart() { return bullets.begin(); }
    std::list<Bullet*>::iterator getBulletsEnd() { return bullets.end(); }
    std::list<Effect*>::iterator getEffectsStart() { return effects.begin(); }
    std::list<Effect*>::iterator getEffectsEnd() { return effects.end(); }
    std::list<Points>::iterator getPointsStart() { return points.begin(); }
    std::list<Points>::iterator getPointsEnd() { return points.end(); }
-   std::list<Bird*>::iterator removeBird(std::list<Bird*>::iterator it) { return birds.erase(it); }
+
    std::list<Bullet*>::iterator removeBullet(std::list<Bullet*>::iterator it) { return bullets.erase(it); }
    std::list<Effect*>::iterator removeEffect(std::list<Effect*>::iterator it) { return effects.erase(it); }
    std::list<Points>::iterator removePoints(std::list<Points>::iterator it) { return points.erase(it); }
    void newBullet(Bullet* newBullet) { bullets.push_back(newBullet); }
-   void newBird(Bird* newBird) { birds.push_back(newBird); }
+
    void newEffect(Effect* newEffect) { effects.push_back(newEffect); }
    void newPoints(Points newPoints) { points.push_back(newPoints); }
    void resetTime() { time.reset(); }
+
+   // Lists
+   std::list<BirdStorage*> getBirds() const { return birds;}
 
    // TEMP PLEASE DO NOT KEEP:(((
    Gun getGun() const { return gun; }
@@ -84,16 +92,16 @@ public:
    std::list<Points>* pPoints() { return &points;}
    std::list<Effect*> getEffects() const { return effects;}
    std::list<Bullet*> getBullets() const { return bullets;}
-   std::list<Bird*> getBirds() const { return birds;}
+
    std::list<Effect*>* pEffects() { return &effects; }
    std::list<Bullet*>* pBullets() { return &bullets; }
 private:
 
     Gun gun;                       // the gun
-    BirdLogic birdLogic;           // logic for the birds
-    std::list<Bullet*> bullets;    // the bullets
-    std::list<Effect*> effects;    // the fragments of a dead bird.
-    std::list<Points>  points;     // point values;
+    std::list<BirdStorage*> birds;           // logic for the birds
+    std::list<Bullet*>      bullets;    // the bullets
+    std::list<Effect*>      effects;    // the fragments of a dead bird.
+    std::list<Points>       points;     // point values;
     TimeStorage time;                     // how many frames have transpired since the beginning
     Score score;                   // the player's score
     HitRatio hitRatio;             // the hit ratio for the birds
@@ -125,10 +133,14 @@ public:
    void newPellet() { skeetStorage.newBullet(new Pellet(getGunAngle())); }
    void newMissile() { skeetStorage.newBullet(new Missile(getGunAngle())); }
    void newBomb() { skeetStorage.newBullet(new Bomb(getGunAngle())); }
-   void newStandardBird(double radius, double speed, int points) { skeetStorage.newBird(new Standard(radius, speed, points)); }
-   void newSinkerBird(double radius, double speed, int points) { skeetStorage.newBird(new Sinker(radius, speed, points)); }
-   void newFloaterBird(double radius, double speed, int points) { skeetStorage.newBird(new Floater(radius, speed, points)); }
-   void newCrazyBird(double radius, double speed, int points) { skeetStorage.newBird(new Crazy(radius, speed, points)); }
+
+   void newStandardBird() { skeetStorage.newBird( new BirdStorage(BirdType::Standard) ); }
+   void newSinkerBird()   { skeetStorage.newBird( new BirdStorage(BirdType::Sinker)   ); }
+   void newFloaterBird()  { skeetStorage.newBird( new BirdStorage(BirdType::Floater)  ); }
+   void newCrazyBird()    { skeetStorage.newBird( new BirdStorage(BirdType::Crazy)    ); }
+   // std::list<BirdStorage*>::const_iterator getBirdsStart() const { return skeetStorage.getBirdsStart(); }
+   // std::list<BirdStorage*>::const_iterator getBirdsEnd() const   { return skeetStorage.getBirdsEnd();   }
+
    void resetTime() { skeetStorage.resetTime(); }
 
    Gun getGun() const { return skeetStorage.getGun(); }
@@ -138,10 +150,13 @@ public:
    std::list<Points> getPoints() const { return skeetStorage.getPoints(); }
    std::list<Effect*> getEffects() const { return skeetStorage.getEffects(); }
    std::list<Bullet*> getBullets() const { return skeetStorage.getBullets(); }
-   std::list<Bird*> getBirds() const { return skeetStorage.getBirds(); }
+   std::list<BirdStorage*> getBirds() const { return skeetStorage.getBirds(); }
 
 private:
    SkeetStorage skeetStorage;
+
+   // Logics
+   BirdLogic birdLogic;
 };
 
 class SkeetInterface
@@ -161,4 +176,7 @@ public:
 
 private:
    SkeetLogic skeetLogic;
+
+   // Interfaces
+   BirdInterface birdInterface;
 };

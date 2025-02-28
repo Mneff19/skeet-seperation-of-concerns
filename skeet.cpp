@@ -25,7 +25,7 @@ using namespace std;
 #ifdef _WIN32
 #include <stdio.h>
 #include <stdlib.h>
-#include <GL/glut.h>         // OpenGL library we copied 
+#include <GL/glut.h>         // OpenGL library we copied
 #define _USE_MATH_DEFINES
 #include <math.h>
 #define GLUT_TEXT GLUT_BITMAP_HELVETICA_12
@@ -59,14 +59,14 @@ void SkeetInterface::interact(const UserInput & ui)
    // bombs can be shot at level 3 and higher
    else if (ui.isB() && skeetLogic.getLevel() > 2)
       skeetLogic.newBomb();
-   
+
    skeetLogic.setBullseye(ui.isShift());
-   
+
    // send movement information to all the bullets. Only the missile cares.
    for (auto bullet : skeetLogic.getBullets())
       bullet->input(ui.isUp() + ui.isRight(), ui.isDown() + ui.isLeft(), ui.isB());
-   
-   
+
+
    // move the stuff
    skeetLogic.animate();
 
@@ -248,14 +248,14 @@ void SkeetInterface::drawLevel() const
 {
    // output the background
    drawBackground(skeetLogic.getLevel() * .1, 0.0, 0.0);
-   
+
    // draw the bullseye
    if (skeetLogic.getBullseye())
       drawBullseye(skeetLogic.getGunAngle());
 
    // output the gun
    skeetLogic.getGun().display();
-         
+
    // output the birds, bullets, and fragments
    for (auto& pts : skeetLogic.getPoints())
       pts.show();
@@ -263,9 +263,11 @@ void SkeetInterface::drawLevel() const
       effect->render();
    for (auto bullet : skeetLogic.getBullets())
       bullet->output();
-   for (auto element : skeetLogic.getBirds())
-      element->draw();
-   
+
+   std::list<BirdStorage*> birds = skeetLogic.getBirds();
+   for (auto bird : birds)
+      birdInterface.draw(*bird);
+
    // status
    drawText(PositionStorage(10,                         skeetLogic.getDimensionsY() - 30), skeetLogic.getScore().getText()  );
    drawText(PositionStorage(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() - 30), skeetLogic.timeText());
@@ -328,7 +330,7 @@ int random(int min, int max)
 void SkeetLogic::animate()
 {
    skeetStorage.incrementTime();
-   
+
    // if status, then do not move the game
    if (skeetStorage.isStatus())
    {
@@ -339,15 +341,15 @@ void SkeetLogic::animate()
       skeetStorage.clearPoints();
       return;
    }
-   
+
    // spawn
    spawn();
-   
+
    // move the birds and the bullets
-   for (auto element : getBirds())
+   for (auto bird : getBirds())
    {
-      element->advance();
-      skeetStorage.adjustHitRatio(element->isDead() ? -1 : 0);
+      birdLogic.advance(*bird);
+      skeetStorage.adjustHitRatio(bird->isDead() ? -1 : 0);
    }
    for (auto bullet : getBullets())
       bullet->move(skeetStorage.pEffects());
@@ -355,7 +357,7 @@ void SkeetLogic::animate()
       effect->fly();
    for (auto it = skeetStorage.getPointsStart(); it != skeetStorage.getPointsEnd(); ++it)
       it->update();
-      
+
    // hit detection
    for (auto element : getBirds())
       for (auto bullet : getBullets())
@@ -372,7 +374,7 @@ void SkeetLogic::animate()
             bullet->setValue(-(element->getPoints()));
             element->setPoints(0);
          }
-   
+
    // remove the zombie birds
    for (auto it = skeetStorage.getBirdsStart(); it != skeetStorage.getBirdsEnd();)
       if ((*it)->isDead())
@@ -384,7 +386,7 @@ void SkeetLogic::animate()
       }
       else
          ++it;
-       
+
    // remove zombie bullets
    for (auto it = skeetStorage.getBulletsStart(); it != skeetStorage.getBulletsEnd(); )
       if ((*it)->isDead())
@@ -397,7 +399,7 @@ void SkeetLogic::animate()
       }
       else
          ++it;
-   
+
    // remove zombie fragments
    for (auto it = skeetStorage.getEffectsStart(); it !=  skeetStorage.getEffectsEnd();)
       if ((*it)->isDead())
@@ -428,12 +430,12 @@ void SkeetLogic::spawn()
          // spawns when there is nothing on the screen
          if (skeetStorage.birdsSize() == 0 && random(0, 15) == 1)
             skeetStorage.addBirds(new Standard(size, 7.0));
-         
+
          // spawn every 4 seconds
          if (random(0, 4 * 30) == 1)
             skeetStorage.addBirds(new Standard(size, 7.0));
          break;
-         
+
       // two kinds of birds in level 2
       case 2:
          size = 25.0;
@@ -448,7 +450,7 @@ void SkeetLogic::spawn()
          if (random(0, 3 * 30) == 1)
             skeetStorage.addBirds(new Sinker(size));
          break;
-      
+
       // three kinds of birds in level 3
       case 3:
          size = 20.0;
@@ -466,7 +468,7 @@ void SkeetLogic::spawn()
          if (random(0, 4 * 30) == 1)
             skeetStorage.addBirds(new Floater(size));
          break;
-         
+
       // three kinds of birds in level 4
       case 4:
          size = 15.0;
@@ -487,7 +489,7 @@ void SkeetLogic::spawn()
          if (random(0, 4 * 30) == 1)
             skeetStorage.addBirds(new Crazy(size));
          break;
-         
+
       default:
          break;
    }

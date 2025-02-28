@@ -147,28 +147,6 @@ BirdStorage::BirdStorage(BirdType birdType) : birdType(birdType), dead(false)
  /*                            ADVANCE                          */
  /***************************************************************/
  /***************************************************************/
-
-/*********************************************
- * STANDARD ADVANCE
- * How the standard bird moves - inertia and drag
- *********************************************/
-void Standard::advance()
-{
-
-}
-
-/*********************************************
- * FLOATER ADVANCE
- * How the floating bird moves: strong drag and anti-gravity
- *********************************************/
-void Floater::advance()
-{
-
-}
-
-/*********************************************
- * ADVANCE
- *********************************************/
 void BirdLogic::advance(BirdStorage &bird)
 {
    switch (bird.getBirdType())
@@ -207,53 +185,33 @@ void BirdLogic::advance(BirdStorage &bird)
 
          break;
       case BirdType::Crazy:
+         // How the crazy bird moves, every half a second it changes direciton
+         // erratic turns eery half a second or so
+         if (randomInt(0, 15) == 0)
+         {
+            bird.addDy(randomFloat(-1.5, 1.5));
+            bird.addDx(randomFloat(-1.5, 1.5));
+         }
+
+         // inertia
+         bird.addInertia();
 
 
          break;
       case BirdType::Sinker:
+         // gravity
+         bird.addDy(-0.07);
 
-
+         // inertia
+         bird.addInertia();
          break;
    }
 
-
-   // Crazy
-   // How the crazy bird moves, every half a second it changes direciton
-   // erratic turns eery half a second or so
-   if (randomInt(0, 15) == 0)
-   {
-      v.addDy(randomFloat(-1.5, 1.5));
-      v.addDx(randomFloat(-1.5, 1.5));
-   }
-
-   // inertia
-   pt.add(v);
-
    // out of bounds checker
-   if (isOutOfBounds())
+   if (isOutOfBounds(bird))
    {
-      kill();
-      points *= -1; // points go negative when it is missed!
-   }
-}
-
-/*********************************************
- * SINKER ADVANCE
- * How the sinker bird moves, no drag but gravity
- *********************************************/
-void Sinker::advance()
-{
-   // gravity
-   v.addDy(-0.07);
-
-   // inertia
-   pt.add(v);
-
-   // out of bounds checker
-   if (isOutOfBounds())
-   {
-      kill();
-      points *= -1; // points go negative when it is missed!
+      bird.kill();
+      bird.multiplyPoints(-1); // points go negative when it is missed!
    }
 }
 
@@ -302,57 +260,40 @@ void drawDisk(const PositionStorage& center, double radius,
    glEnd();
 }
 
-/*********************************************
- * STANDARD DRAW
- * Draw a standard bird: blue center and white outline
- *********************************************/
-void Standard::draw()
+/************************************************************************
+ * DRAW
+ * Draw a bird
+ *************************************************************************/
+void BirdInterface::draw(BirdStorage &bird)
 {
-   if (!isDead())
+   if (!bird.isDead())
    {
-      drawDisk(pt, radius - 0.0, 1.0, 1.0, 1.0); // white outline
-      drawDisk(pt, radius - 3.0, 0.0, 0.0, 1.0); // blue center
-   }
-}
+      switch (bird.getBirdType())
+      {
+         case BirdType::Standard:
+            // Draw a standard bird: blue center and white outline
+            drawDisk(bird.getPosition(), bird.getRadius() - 0.0, 1.0, 1.0, 1.0); // white outline
+            drawDisk(bird.getPosition(), bird.getRadius() - 3.0, 0.0, 0.0, 1.0); // blue center
+            break;
+         case BirdType::Floater:
+            // Draw a floating bird: white center and blue outline
+            drawDisk(bird.getPosition(), bird.getRadius() - 0.0, 0.0, 0.0, 1.0); // blue outline
+            drawDisk(bird.getPosition(), bird.getRadius() - 4.0, 1.0, 1.0, 1.0); // white center
+            break;
+         case BirdType::Crazy:
+            // Draw a crazy bird: concentric circles in a course gradient
+            drawDisk(bird.getPosition(), bird.getRadius() * 1.0, 0.0, 0.0, 1.0); // bright blue outside
+            drawDisk(bird.getPosition(), bird.getRadius() * 0.8, 0.2, 0.2, 1.0);
+            drawDisk(bird.getPosition(), bird.getRadius() * 0.6, 0.4, 0.4, 1.0);
+            drawDisk(bird.getPosition(), bird.getRadius() * 0.4, 0.6, 0.6, 1.0);
+            drawDisk(bird.getPosition(), bird.getRadius() * 0.2, 0.8, 0.8, 1.0); // almost white inside
+            break;
+         case BirdType::Sinker:
+            // Draw a sinker bird: black center and dark blue outline
+            drawDisk(bird.getPosition(), bird.getRadius() - 0.0, 0.0, 0.0, 0.8);
+            drawDisk(bird.getPosition(), bird.getRadius() - 4.0, 0.0, 0.0, 0.0);
+            break;
 
-/*********************************************
- * FLOATER DRAW
- * Draw a floating bird: white center and blue outline
- *********************************************/
-void Floater::draw()
-{
-   if (!isDead())
-   {
-      drawDisk(pt, radius - 0.0, 0.0, 0.0, 1.0); // blue outline
-      drawDisk(pt, radius - 4.0, 1.0, 1.0, 1.0); // white center
-   }
-}
-
-/*********************************************
- * CRAZY DRAW
- * Draw a crazy bird: concentric circles in a course gradient
- *********************************************/
-void Crazy::draw()
-{
-   if (!isDead())
-   {
-      drawDisk(pt, radius * 1.0, 0.0, 0.0, 1.0); // bright blue outside
-      drawDisk(pt, radius * 0.8, 0.2, 0.2, 1.0);
-      drawDisk(pt, radius * 0.6, 0.4, 0.4, 1.0);
-      drawDisk(pt, radius * 0.4, 0.6, 0.6, 1.0);
-      drawDisk(pt, radius * 0.2, 0.8, 0.8, 1.0); // almost white inside
-   }
-}
-
-/*********************************************
- * SINKER DRAW
- * Draw a sinker bird: black center and dark blue outline
- *********************************************/
-void Sinker::draw()
-{
-   if (!isDead())
-   {
-      drawDisk(pt, radius - 0.0, 0.0, 0.0, 0.8);
-      drawDisk(pt, radius - 4.0, 0.0, 0.0, 0.0);
+      }
    }
 }

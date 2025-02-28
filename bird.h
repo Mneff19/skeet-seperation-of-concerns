@@ -14,9 +14,9 @@
 enum class BirdType
 {
    Standard = 0,
-   Floater = 1,
-   Crazy = 2,
-   Sinker = 3,
+   Floater  = 1,
+   Crazy    = 2,
+   Sinker   = 3,
 };
 
 /**********************
@@ -57,7 +57,7 @@ public:
    void multiplyPoints(double multiplicationFactor)     { points *= multiplicationFactor; }
    void addInertia()                                    { pt.add(v);                      }
    void addDy(double dy)                                { v.addDy(dy);                    }
-
+   void addDx(double dx)                                { v.addDx(dx);                    }
 
 
 
@@ -67,6 +67,7 @@ public:
 
 class BirdLogic
 {
+public:
    bool isOutOfBounds(BirdStorage &bird) const
    {
       return (bird.getPositionX() < -bird.getRadius() || bird.getPositionX() >= WIDTH  + bird.getRadius() ||
@@ -79,6 +80,7 @@ class BirdLogic
 
 class BirdInterface
 {
+public:
    // special functions
-   virtual void draw() = 0;
+   void draw(BirdStorage &bird) const;
 };
