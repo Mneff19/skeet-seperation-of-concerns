@@ -81,113 +81,61 @@ BirdStorage::BirdStorage(BirdType birdType) : birdType(birdType), dead(false)
          radius = 25.0;
          speed  = 5.0;
          points = 10;
+
+         // set the position: standard birds start from the middle
+         pt.setY(randomFloat(HEIGHT * 0.25, HEIGHT * 0.75));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
+
          break;
       case BirdType::Floater:
          radius = 30.0;
          speed  = 5.0;
          points = 15;
+
+         // floaters start on the lower part of the screen because they go up with time
+         pt.setY(randomFloat(HEIGHT * 0.01, HEIGHT * 0.5));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(0.0, speed / 3.0));
+
          break;
       case BirdType::Crazy:
          radius = 30.0;
          speed  = 4.5;
          points = 30;
+
+         // crazy birds start in the middle and can go any which way
+         pt.setY(randomFloat(HEIGHT * 0.25, HEIGHT * 0.75));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
+
          break;
       case BirdType::Sinker:
          radius = 30.0;
          speed  = 4.5;
          points = 20;
+
+         // sinkers start on the upper part of the screen because they go down with time
+         pt.setY(randomFloat(HEIGHT * 0.50, HEIGHT * 0.95));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 3.0, 0.0));
+
          break;
    }
 
-   // set the position: standard birds start from the middle
-   pt.setY(randomFloat(dimensions.getY() * 0.25, dimensions.getY() * 0.75));
-   pt.setX(0.0);
-
-   // set the velocity
-   v.setDx(randomFloat(speed - 0.5, speed + 0.5));
-   v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
-
    // set the points
-   this->points = points;
-
-   // set the size
-   this->radius = radius;
-}
-
-/******************************************************************
- * STANDARD constructor
- ******************************************************************/
-Standard::Standard(double radius, double speed, int points) : Bird()
-{
-   // set the position: standard birds start from the middle
-   pt.setY(randomFloat(dimensions.getY() * 0.25, dimensions.getY() * 0.75));
-   pt.setX(0.0);
-
-   // set the velocity
-   v.setDx(randomFloat(speed - 0.5, speed + 0.5));
-   v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
-
-   // set the points
-   this->points = points;
-
-   // set the size
-   this->radius = radius;
-}
-
-/******************************************************************
- * FLOATER constructor
- ******************************************************************/
-Floater::Floater(double radius, double speed, int points) : Bird()
-{
-   // floaters start on the lower part of the screen because they go up with time
-   pt.setY(randomFloat(dimensions.getY() * 0.01, dimensions.getY() * 0.5));
-   pt.setX(0.0);
-
-   // set the velocity
-   v.setDx(randomFloat(speed - 0.5, speed + 0.5));
-   v.setDy(randomFloat(0.0, speed / 3.0));
-
-   // set the points value
-   this->points = points;
-
-   // set the size
-   this->radius = radius;
-}
-
-/******************************************************************
- * SINKER constructor
- ******************************************************************/
-Sinker::Sinker(double radius, double speed, int points) : Bird()
-{
-   // sinkers start on the upper part of the screen because they go down with time
-   pt.setY(randomFloat(dimensions.getY() * 0.50, dimensions.getY() * 0.95));
-   pt.setX(0.0);
-
-   // set the velocity
-   v.setDx(randomFloat(speed - 0.5, speed + 0.5));
-   v.setDy(randomFloat(-speed / 3.0, 0.0));
-
-   // set the points value
-   this->points = points;
-
-   // set the size
-   this->radius = radius;
-}
-
-/******************************************************************
- * CRAZY constructor
- ******************************************************************/
-Crazy::Crazy(double radius, double speed, int points) : Bird()
-{
-   // crazy birds start in the middle and can go any which way
-   pt.setY(randomFloat(dimensions.getY() * 0.25, dimensions.getY() * 0.75));
-   pt.setX(0.0);
-
-   // set the velocity
-   v.setDx(randomFloat(speed - 0.5, speed + 0.5));
-   v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
-
-   // set the points value
    this->points = points;
 
    // set the size
@@ -206,18 +154,7 @@ Crazy::Crazy(double radius, double speed, int points) : Bird()
  *********************************************/
 void Standard::advance()
 {
-   // small amount of drag
-   v *= 0.995;
 
-   // inertia
-   pt.add(v);
-
-   // out of bounds checker
-   if (isOutOfBounds())
-   {
-      kill();
-      points *= -1; // points go negative when it is missed!
-   }
 }
 
 /*********************************************
@@ -226,29 +163,62 @@ void Standard::advance()
  *********************************************/
 void Floater::advance()
 {
-   // large amount of drag
-   v *= 0.990;
 
-   // inertia
-   pt.add(v);
-
-   // anti-gravity
-   v.addDy(0.05);
-
-   // out of bounds checker
-   if (isOutOfBounds())
-   {
-      kill();
-      points *= -1; // points go negative when it is missed!
-   }
 }
 
 /*********************************************
- * CRAZY ADVANCE
- * How the crazy bird moves, every half a second it changes direciton
+ * ADVANCE
  *********************************************/
-void Crazy::advance()
+void BirdLogic::advance(BirdStorage &bird)
 {
+   switch (bird.getBirdType())
+   {
+      case BirdType::Standard:
+         // small amount of drag
+         bird.multiplyV(0.995);
+
+         // inertia
+         bird.addInertia();
+
+         // out of bounds checker
+         if (isOutOfBounds(bird))
+         {
+            bird.kill();
+            bird.multiplyPoints(-1); // points go negative when it is missed!
+         }
+
+         break;
+      case BirdType::Floater:
+         // large amount of drag
+         bird.multiplyV(0.990);
+
+         // inertia
+         bird.addInertia();
+
+         // anti-gravity
+         bird.addDy(0.05);
+
+         // out of bounds checker
+         if (isOutOfBounds(bird))
+         {
+            bird.kill();
+            bird.multiplyPoints(-1); // points go negative when it is missed!
+         }
+
+         break;
+      case BirdType::Crazy:
+
+
+         break;
+      case BirdType::Sinker:
+
+
+         break;
+   }
+
+
+   // Crazy
+   // How the crazy bird moves, every half a second it changes direciton
    // erratic turns eery half a second or so
    if (randomInt(0, 15) == 0)
    {

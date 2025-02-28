@@ -9,6 +9,7 @@
 
 #pragma once
 #include "position.h"
+#include "constants.h"
 
 enum class BirdType
 {
@@ -36,17 +37,28 @@ public:
    BirdStorage(BirdType birdType);
 
    // setters
-   void operator=(const PositionStorage    & rhs) { pt = rhs;    }
-   void operator=(const VelocityStorage & rhs) { v = rhs;     }
-   void kill()                          { dead = true; }
-   void setPoints(int pts)              { points = pts;}
+   void operator=(const PositionStorage    & rhs)       { pt = rhs;         }
+   void operator=(const VelocityStorage & rhs)          { v = rhs;          }
+   void kill()                                          { dead = true;      }
+   void setPoints(int pts)                              { points = pts;     }
 
    // getters
-   bool isDead()           const { return dead;   }
-   PositionStorage getPosition()     const { return pt;     }
-   VelocityStorage getVelocity()  const { return v;      }
-   double getRadius()      const { return radius; }
-   int getPoints() const { return points; }
+   BirdType getBirdType()                         const { return birdType;  }
+   bool isDead()                                  const { return dead;      }
+   PositionStorage getPosition()                  const { return pt;        }
+   VelocityStorage getVelocity()                  const { return v;         }
+   double getRadius()                             const { return radius;    }
+   int getPoints()                                const { return points;    }
+   double getPositionX()                          const { return pt.getX(); }
+   double getPositionY()                          const { return pt.getY(); }
+
+   // Other
+   void multiplyV(double multiplicationFactor)          { v *= multiplicationFactor;      }
+   void multiplyPoints(double multiplicationFactor)     { points *= multiplicationFactor; }
+   void addInertia()                                    { pt.add(v);                      }
+   void addDy(double dy)                                { v.addDy(dy);                    }
+
+
 
 
 
@@ -57,12 +69,12 @@ class BirdLogic
 {
    bool isOutOfBounds(BirdStorage &bird) const
    {
-      return (pt.getX() < -bird.getRadius() || pt.getX() >= dimensions.getX() + bird.getRadius() ||
-              pt.getY() < -bird.getRadius() || pt.getY() >= dimensions.getY() + bird.getRadius());
+      return (bird.getPositionX() < -bird.getRadius() || bird.getPositionX() >= WIDTH  + bird.getRadius() ||
+              bird.getPositionY() < -bird.getRadius() || bird.getPositionY() >= HEIGHT + bird.getRadius());
    }
 
    // special functions
-   virtual void advance() = 0;
+   void advance(BirdStorage &bird);
 };
 
 class BirdInterface

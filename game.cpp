@@ -10,12 +10,10 @@
 #include "uiInteract.h"
 #include "skeet.h"
 #include "position.h"
+#include "constants.h"
 
-#define WIDTH  800.0
-#define HEIGHT 800.0
 
 PositionStorage Bullet::dimensions(WIDTH, HEIGHT);
-PositionStorage Bird::dimensions(WIDTH, HEIGHT);
 
  /*************************************
   * All the interesting work happens here, when
@@ -27,7 +25,7 @@ PositionStorage Bird::dimensions(WIDTH, HEIGHT);
 void callBack(const UserInput* pUI, void* p)
 {
    // the first step is to cast the void pointer into a game object. This
-   // is the first step of every single callback function in OpenGL. 
+   // is the first step of every single callback function in OpenGL.
    SkeetInterface* pSkeet = (SkeetInterface*)p;
 
    // handle user input
