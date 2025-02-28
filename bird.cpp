@@ -26,7 +26,7 @@
 #ifdef _WIN32
 #include <stdio.h>
 #include <stdlib.h>
-#include <GL/glut.h>         // OpenGL library we copied 
+#include <GL/glut.h>         // OpenGL library we copied
 #define _USE_MATH_DEFINES
 #include <math.h>
 #define GLUT_TEXT GLUT_BITMAP_HELVETICA_12
@@ -64,6 +64,55 @@ double randomFloat(double min, double max)
 /*                         CONSTRUCTORS                         */
 /***************************************************************/
 /***************************************************************/
+
+/***************************************************************
+* BIRD STORAGE constructor
+***************************************************************/
+BirdStorage::BirdStorage(BirdType birdType) : birdType(birdType), dead(false)
+{
+   // initialize variables
+   double radius;
+   double speed;
+   int    points;
+
+   switch (birdType)
+   {
+      case BirdType::Standard:
+         radius = 25.0;
+         speed  = 5.0;
+         points = 10;
+         break;
+      case BirdType::Floater:
+         radius = 30.0;
+         speed  = 5.0;
+         points = 15;
+         break;
+      case BirdType::Crazy:
+         radius = 30.0;
+         speed  = 4.5;
+         points = 30;
+         break;
+      case BirdType::Sinker:
+         radius = 30.0;
+         speed  = 4.5;
+         points = 20;
+         break;
+   }
+
+   // set the position: standard birds start from the middle
+   pt.setY(randomFloat(dimensions.getY() * 0.25, dimensions.getY() * 0.75));
+   pt.setX(0.0);
+
+   // set the velocity
+   v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+   v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
+
+   // set the points
+   this->points = points;
+
+   // set the size
+   this->radius = radius;
+}
 
 /******************************************************************
  * STANDARD constructor

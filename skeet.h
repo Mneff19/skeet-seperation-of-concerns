@@ -33,7 +33,7 @@ public:
 
     // is the game currently playing right now?
     bool isPlaying() const { return time.isPlaying();  }
-   
+
    double getDimensionsX() const { return dimensions.getX(); }
    double getDimensionsY() const { return dimensions.getY(); }
    int getLevel() const { return time.level(); }
@@ -74,7 +74,7 @@ public:
    void newEffect(Effect* newEffect) { effects.push_back(newEffect); }
    void newPoints(Points newPoints) { points.push_back(newPoints); }
    void resetTime() { time.reset(); }
-   
+
    // TEMP PLEASE DO NOT KEEP:(((
    Gun getGun() const { return gun; }
    Gun* pGun() { return &gun; }
@@ -90,7 +90,7 @@ public:
 private:
 
     Gun gun;                       // the gun
-    std::list<Bird*> birds;        // all the shootable birds
+    BirdLogic birdLogic;           // logic for the birds
     std::list<Bullet*> bullets;    // the bullets
     std::list<Effect*> effects;    // the fragments of a dead bird.
     std::list<Points>  points;     // point values;
@@ -106,7 +106,7 @@ class SkeetLogic
 {
 public:
    SkeetLogic(PositionStorage & dimensions) : skeetStorage(SkeetStorage(dimensions)) {}
-   
+
    // move the gameplay by one unit of time
    void animate();
    // generate new birds
@@ -130,7 +130,7 @@ public:
    void newFloaterBird(double radius, double speed, int points) { skeetStorage.newBird(new Floater(radius, speed, points)); }
    void newCrazyBird(double radius, double speed, int points) { skeetStorage.newBird(new Crazy(radius, speed, points)); }
    void resetTime() { skeetStorage.resetTime(); }
-   
+
    Gun getGun() const { return skeetStorage.getGun(); }
    Gun* pGun() { return skeetStorage.pGun(); }
    Score getScore() const { return skeetStorage.getScore(); }
@@ -139,7 +139,7 @@ public:
    std::list<Effect*> getEffects() const { return skeetStorage.getEffects(); }
    std::list<Bullet*> getBullets() const { return skeetStorage.getBullets(); }
    std::list<Bird*> getBirds() const { return skeetStorage.getBirds(); }
-   
+
 private:
    SkeetStorage skeetStorage;
 };
@@ -158,7 +158,7 @@ public:
                   double redFore, double greenFore, double blueFore,
                   double redBack, double greenBack, double blueBack) const;
    void drawBullseye(double angle) const;
-   
+
 private:
    SkeetLogic skeetLogic;
 };

@@ -5,3 +5,6 @@
 *.filters
 *.config
 .DS_STORE
+
+build*
+CMakeLists*
