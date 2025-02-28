@@ -20,9 +20,9 @@
 class Bullet
 {
 protected:
-   static Position dimensions;   // size of the screen
-   Position pt;                  // position of the bullet
-   Velocity v;                // velocity of the bullet
+   static PositionStorage dimensions;   // size of the screen
+   PositionStorage pt;                  // position of the bullet
+   VelocityStorage v;                // velocity of the bullet
    double radius;             // the size (radius) of the bullet
    bool dead;                 // is this bullet dead?
    int value;                 // how many points does this cost?
@@ -36,8 +36,8 @@ public:
    
    // getters
    bool isDead()           const { return dead;   }
-   Position getPosition()  const { return pt;     }
-   Velocity getVelocity()  const { return v;      }
+   PositionStorage getPosition()  const { return pt;     }
+   VelocityStorage getVelocity()  const { return v;      }
    double getRadius()      const { return radius; }
    int getValue()          const { return value;  }
 
@@ -53,10 +53,10 @@ protected:
       return (pt.getX() < -radius || pt.getX() >= dimensions.getX() + radius ||
          pt.getY() < -radius || pt.getY() >= dimensions.getY() + radius);
    }
-   void drawLine(const Position& begin, const Position& end,
+   void drawLine(const PositionStorage& begin, const PositionStorage& end,
                  double red = 1.0, double green = 1.0, double blue = 1.0) const;
 
-   void drawDot(const Position& point, double radius = 2.0,
+   void drawDot(const PositionStorage& point, double radius = 2.0,
                 double red = 1.0, double green = 1.0, double blue = 1.0) const;
    int    random(int    min, int    max);
    double random(double min, double max);

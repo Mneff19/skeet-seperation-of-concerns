@@ -248,7 +248,7 @@ void Sinker::advance()
  * DRAW Disk
  * Draw a filled circule at [center] with size [radius]
  *************************************************************************/
-void drawDisk(const Position& center, double radius,
+void drawDisk(const PositionStorage& center, double radius,
               double red, double green, double blue)
 {
    assert(radius > 1.0);
@@ -259,10 +259,10 @@ void drawDisk(const Position& center, double radius,
    glColor3f((GLfloat)red /* red % */, (GLfloat)green /* green % */, (GLfloat)blue /* blue % */);
 
    // three points: center, pt1, pt2
-   Position pt1;
+   PositionStorage pt1;
    pt1.setX(center.getX() + (radius * cos(0.0)));
    pt1.setY(center.getY() + (radius * sin(0.0)));
-   Position pt2(pt1);
+   PositionStorage pt2(pt1);
 
    // go around the circle
    for (double radians = increment;

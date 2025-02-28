@@ -135,7 +135,7 @@ void Shrapnel::move(std::list<Effect*>* effects)
  * GL VERTEXT POINT
  * Just a more convenient format of glVertext2f
  *************************************************************************/
-inline void glVertexPoint(const Position& point)
+inline void glVertexPoint(const PositionStorage& point)
 {
    glVertex2f((GLfloat)point.getX(), (GLfloat)point.getY());
 }
@@ -144,7 +144,7 @@ inline void glVertexPoint(const Position& point)
  * DRAW LINE
  * Draw a line on the screen from the beginning to the end.
  *************************************************************************/
-void Bullet::drawLine(const Position& begin, const Position& end,
+void Bullet::drawLine(const PositionStorage& begin, const PositionStorage& end,
                       double red, double green, double blue) const
 {
    // Get ready...
@@ -164,7 +164,7 @@ void Bullet::drawLine(const Position& begin, const Position& end,
  * DRAW DOT
  * Draw a single point (square actually on the screen, r pixels by r pixels
  *************************************************************************/
-void Bullet::drawDot(const Position& point, double radius,
+void Bullet::drawDot(const PositionStorage& point, double radius,
                      double red, double green, double blue) const
 {
    // Get ready, get set...
@@ -228,7 +228,7 @@ void Missile::output()
     if (!isDead())
     {
         // missile is a line with a dot at the end so it looks like fins.
-        Position ptNext(pt);
+       PositionStorage ptNext(pt);
         ptNext.add(v);
         drawLine(pt, ptNext, 1.0, 1.0, 0.0);
         drawDot(pt, 3.0, 1.0, 1.0, 1.0);

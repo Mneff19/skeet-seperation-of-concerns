@@ -55,7 +55,7 @@ double random(double min, double max)
 /************************************************************************
  * FRAGMENT constructor
  *************************************************************************/
-Fragment::Fragment(const Position & pt, const Velocity & v) : Effect(pt)
+Fragment::Fragment(const PositionStorage & pt, const VelocityStorage & v) : Effect(pt)
 {
    // the velocity is a random kick plus the velocity of the thing that died
    this->v.setDx(v.getDx() * 0.5 + random(-6.0, 6.0));
@@ -71,7 +71,7 @@ Fragment::Fragment(const Position & pt, const Velocity & v) : Effect(pt)
 /************************************************************************
  * STREEK constructor
  *************************************************************************/
-Streek::Streek(const Position & pt, Velocity v) : Effect(pt)
+Streek::Streek(const PositionStorage & pt, VelocityStorage v) : Effect(pt)
 {
    ptEnd = pt;
    v *= -1.0;
@@ -84,7 +84,7 @@ Streek::Streek(const Position & pt, Velocity v) : Effect(pt)
 /************************************************************************
  * EXHAUST constructor
  *************************************************************************/
-Exhaust::Exhaust(const Position & pt, Velocity v) : Effect(pt)
+Exhaust::Exhaust(const PositionStorage & pt, VelocityStorage v) : Effect(pt)
 {
     ptEnd = pt;
     v *= -1.0;

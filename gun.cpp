@@ -40,15 +40,15 @@
   *           rotation Rotation in degrees
   *    OUTPUT point    The new position
   *************************************************************************/
-Position rotate(const Position& origin,
-   double x, double y, double rotation) 
+PositionStorage rotate(const PositionStorage& origin,
+   double x, double y, double rotation)
 {
    // because sine and cosine are expensive, we want to call them only once
    double cosA = cos(rotation);
    double sinA = sin(rotation);
 
    // start with our original point
-   Position ptReturn(origin);
+   PositionStorage ptReturn(origin);
 
    // find the new values
    ptReturn.addX(x * cosA - y * sinA);
@@ -61,7 +61,7 @@ Position rotate(const Position& origin,
  * GL VERTEXT POINT
  * Just a more convenient format of glVertext2f
  *************************************************************************/
-inline void glVertexPoint(const Position& point)
+inline void glVertexPoint(const PositionStorage& point)
 {
    glVertex2f((GLfloat)point.getX(), (GLfloat)point.getY());
 }
@@ -70,7 +70,7 @@ inline void glVertexPoint(const Position& point)
  * DRAW RECTANGLE
  * Draw a rectangle on the screen from the beginning to the end.
  *************************************************************************/
-void drawRectangle(const Position& pt,
+void drawRectangle(const PositionStorage& pt,
                    double angle = 0.0,
                    double width = 10.0,
                    double height = 100.0,

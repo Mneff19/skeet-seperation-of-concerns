@@ -19,13 +19,13 @@
 class Points
 {
 public:
-   Points(const Position& pt, int value);
+   Points(const PositionStorage& pt, int value);
    void show() const;
    void update();
    bool isDead() const {return age <= 0.0; }
 private:
-   Position pt;
-   Velocity v;
+   PositionStorage pt;
+   VelocityStorage v;
    int value;
    float age;
 };

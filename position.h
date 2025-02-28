@@ -13,28 +13,28 @@
 #include <iostream>
 #include <cmath>
 
-class Velocity;
+class VelocityStorage;
 
 /*********************************************
  * POINT
  * A single position.  
  *********************************************/
-class Position
+class PositionStorage
 {
 public:
    // constructors
-   Position()            : x(0.0), y(0.0)  {}
-   Position(double x, double y);
-   Position(const Position & pt) : x(pt.x), y(pt.y) {}
+   PositionStorage()            : x(0.0), y(0.0)  {}
+   PositionStorage(double x, double y);
+   PositionStorage(const PositionStorage & pt) : x(pt.x), y(pt.y) {}
 
    // getters
    double getX()       const { return x;              }
    double getY()       const { return y;              }
-   bool operator == (const Position & rhs) const
+   bool operator == (const PositionStorage & rhs) const
    {
       return x == rhs.x && y == rhs.y;
    }
-   bool operator != (const Position & rhs) const
+   bool operator != (const PositionStorage & rhs) const
    {
       return x != rhs.x || y != rhs.y;
    }
@@ -44,9 +44,9 @@ public:
    void setY(double y)       { this->y = y;           }
    void addX(double dx)      { setX(getX() + dx);     }
    void addY(double dy)      { setY(getY() + dy);     }
-   void add(const Velocity & v);
-   Position & operator += (const Velocity & v);
-   Position & operator = (const Position & rhs)
+   void add(const VelocityStorage & v);
+   PositionStorage & operator += (const VelocityStorage & v);
+   PositionStorage & operator = (const PositionStorage & rhs)
    {
       x = rhs.x;
       y = rhs.y;
@@ -62,22 +62,22 @@ private:
  * VELOCITY
  * Movement
  *********************************************/
-class Velocity
+class VelocityStorage
 {
 public:
    // constructors
-   Velocity()            : dx(0.0), dy(0.0)  {}
-   Velocity(double dx, double dy);
-   Velocity(const Velocity & v) : dx(v.dx), dy(v.dy) {}
+   VelocityStorage()            : dx(0.0), dy(0.0)  {}
+   VelocityStorage(double dx, double dy);
+   VelocityStorage(const VelocityStorage & v) : dx(v.dx), dy(v.dy) {}
 
    // getters
    double getDx()       const { return dx;              }
    double getDy()       const { return dy;              }
-   bool operator == (const Velocity & rhs) const
+   bool operator == (const VelocityStorage & rhs) const
    {
       return dx == rhs.dx && dy == rhs.dy;
    }
-   bool operator != (const Velocity & rhs) const
+   bool operator != (const VelocityStorage & rhs) const
    {
       return dx != rhs.dx || dy != rhs.dy;
    }
@@ -91,31 +91,31 @@ public:
    void setDy(double dy)       { this->dy = dy;   }
    void addDx(double dx)       { this->dx += dx;  }
    void addDy(double dy)       { this->dy += dy;  }
-   Velocity & operator += (const Velocity & v)
+   VelocityStorage & operator += (const VelocityStorage & v)
    {
       addDx(v.getDx());
       addDy(v.getDy());
       return *this;
    }
-   void add(const Velocity & v)
+   void add(const VelocityStorage & v)
    {
       *this += v;
    }
-   Velocity & operator = (const Velocity & rhs)
+   VelocityStorage & operator = (const VelocityStorage & rhs)
    {
       dx = rhs.dx;
       dy = rhs.dy;
       return *this;
    }
-   Velocity & operator *= (double mult)
+   VelocityStorage & operator *= (double mult)
    {
       dx *= mult;
       dy *= mult;
       return *this;
    }
-   Velocity operator* (double mult)
+   VelocityStorage operator* (double mult)
    {
-      Velocity v(*this);
+      VelocityStorage v(*this);
       v *= mult;
       return v;
    }
@@ -130,16 +130,16 @@ public:
    }
 
 private:
-   double dx;           // horizontal velocity
-   double dy;           // vertical velocity
+   double dx;           // horizontal VelocityStorage
+   double dy;           // vertical VelocityStorage
 };
 
 // stream I/O useful for debugging
-std::ostream & operator << (std::ostream & out, const Position & pt);
-std::istream & operator >> (std::istream & in,        Position & pt);
+std::ostream & operator << (std::ostream & out, const PositionStorage & pt);
+std::istream & operator >> (std::istream & in,        PositionStorage & pt);
 
 inline double max(double x, double y) { return (x > y) ? x : y; }
 inline double min(double x, double y) { return (x > y) ? y : x; }
 
-double minimumDistance(const Position & pt1, const Velocity & v1,
-                       const Position & pt2, const Velocity & v2);
+double minimumDistance(const PositionStorage & pt1, const VelocityStorage & v1,
+                       const PositionStorage & pt2, const VelocityStorage & v2);

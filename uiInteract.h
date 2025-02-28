@@ -35,7 +35,7 @@ public:
 
    // Constructor if you want to set up the window with anything but
    // the default parameters
-   UserInput(int argc, char ** argv, const char * title, const Position & dimensions)
+   UserInput(int argc, char ** argv, const char * title, const PositionStorage & dimensions)
    {
       initialize(argc, argv, title, dimensions);
    }
@@ -77,7 +77,7 @@ public:
    static void (*callBack)(const UserInput *, void *);
 
 private:
-   void initialize(int argc, char ** argv, const char * title, const Position & dimensions);
+   void initialize(int argc, char ** argv, const char * title, const PositionStorage & dimensions);
 
    static bool         initialized;  // only run the constructor once!
    static double       timePeriod;   // interval between frame draws

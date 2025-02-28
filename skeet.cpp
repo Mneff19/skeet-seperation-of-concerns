@@ -193,7 +193,7 @@ void SkeetInterface::drawTimer(double percent,
  *   INPUT  topLeft   The top left corner of the text
  *          text      The text to be displayed
  ************************************************************************/
-void drawText(const Position& topLeft, const char* text) 
+void drawText(const PositionStorage& topLeft, const char* text)
 {
    void* pFont = GLUT_TEXT;
    glColor3f((GLfloat)1.0 /* red % */, (GLfloat)1.0 /* green % */, (GLfloat)1.0 /* blue % */);
@@ -205,7 +205,7 @@ void drawText(const Position& topLeft, const char* text)
    for (const char* p = text; *p; p++)
       glutBitmapCharacter(pFont, *p);
 }
-void drawText(const Position & topLeft, const string & text)
+void drawText(const PositionStorage & topLeft, const string & text)
 {
    drawText(topLeft, text.c_str());
 }
@@ -267,9 +267,9 @@ void SkeetInterface::drawLevel() const
       element->draw();
    
    // status
-   drawText(Position(10,                         skeetLogic.getDimensionsY() - 30), skeetLogic.getScore().getText()  );
-   drawText(Position(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() - 30), skeetLogic.getTime().getText()   );
-   drawText(Position(skeetLogic.getDimensionsX() - 110,    skeetLogic.getDimensionsY() - 30), skeetLogic.getHitRatio().getText());
+   drawText(PositionStorage(10,                         skeetLogic.getDimensionsY() - 30), skeetLogic.getScore().getText()  );
+   drawText(PositionStorage(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() - 30), skeetLogic.getTime().getText()   );
+   drawText(PositionStorage(skeetLogic.getDimensionsX() - 110,    skeetLogic.getDimensionsY() - 30), skeetLogic.getHitRatio().getText());
 }
 
 /************************
@@ -283,11 +283,11 @@ void SkeetInterface::drawStatus() const
    if (skeetLogic.isGameOver())
    {
       // draw the end of game message
-      drawText(Position(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() / 2 + 10),
+      drawText(PositionStorage(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() / 2 + 10),
                "Game Over");
 
       // draw end of game status
-      drawText(Position(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() / 2 - 10),
+      drawText(PositionStorage(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() / 2 - 10),
                skeetLogic.getScore().getText());
    }
    else
@@ -300,7 +300,7 @@ void SkeetInterface::drawStatus() const
       // draw the message giving a countdown
       sout << "Level " << skeetLogic.getLevel()
            << " begins in " << skeetLogic.secondsLeft() << " seconds";
-      drawText(Position(skeetLogic.getDimensionsX() / 2 - 110, skeetLogic.getDimensionsY() / 2 - 10),
+      drawText(PositionStorage(skeetLogic.getDimensionsX() / 2 - 110, skeetLogic.getDimensionsY() / 2 - 10),
          sout.str());
    }
 }

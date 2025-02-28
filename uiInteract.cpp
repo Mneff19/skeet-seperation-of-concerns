@@ -279,7 +279,7 @@ void (*UserInput::callBack)(const UserInput *, void *) = NULL;
  *           argv:       The actual command-line parameters
  *           title:      The text for the titlebar of the window
  *************************************************************************/
-void UserInput::initialize(int argc, char ** argv, const char * title, const Position & dimensions)
+void UserInput::initialize(int argc, char ** argv, const char * title, const PositionStorage & dimensions)
 {
    if (initialized)
       return;

@@ -17,9 +17,9 @@
 class Bird
 {
 protected:
-   static Position dimensions; // size of the screen
-   Position pt;                  // position of the flyer
-   Velocity v;                // velocity of the flyer
+   static PositionStorage dimensions; // size of the screen
+   PositionStorage pt;                  // position of the flyer
+   VelocityStorage v;                // velocity of the flyer
    double radius;             // the size (radius) of the flyer
    bool dead;                 // is this flyer dead?
    int points;                // how many points is this worth?
@@ -28,15 +28,15 @@ public:
    Bird() : dead(false), points(0), radius(1.0) { }
    
    // setters
-   void operator=(const Position    & rhs) { pt = rhs;    }
-   void operator=(const Velocity & rhs) { v = rhs;     }
+   void operator=(const PositionStorage    & rhs) { pt = rhs;    }
+   void operator=(const VelocityStorage & rhs) { v = rhs;     }
    void kill()                          { dead = true; }
    void setPoints(int pts)              { points = pts;}
 
    // getters
    bool isDead()           const { return dead;   }
-   Position getPosition()     const { return pt;     }
-   Velocity getVelocity()  const { return v;      }
+   PositionStorage getPosition()     const { return pt;     }
+   VelocityStorage getVelocity()  const { return v;      }
    double getRadius()      const { return radius; }
    int getPoints() const { return points; }
    bool isOutOfBounds() const

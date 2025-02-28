@@ -16,11 +16,11 @@
 class Effect
 {
 protected:
-    Position pt;      // location of the effect
+    PositionStorage pt;      // location of the effect
     double age;    // 1.0 = new, 0.0 = dead
 public:
     // create a fragment based on the velocity and position of the bullet
-    Effect(const Position & pt) : pt(pt), age(0.5) {}
+    Effect(const PositionStorage & pt) : pt(pt), age(0.5) {}
     
     // draw it
     virtual void render() const = 0;
@@ -39,11 +39,11 @@ public:
 class Fragment : public Effect
 {
 private:
-   Velocity v;    // direction the fragment is flying
+   VelocityStorage v;    // direction the fragment is flying
    double size;   // size of the fragment
 public:
     // create a fragment based on the velocity and position of the bullet
-    Fragment(const Position & pt, const Velocity & v);
+    Fragment(const PositionStorage & pt, const VelocityStorage & v);
     
     // draw it
     void render() const;
@@ -59,10 +59,10 @@ public:
 class Streek : public Effect
 {
 private:
-   Position ptEnd;
+   PositionStorage ptEnd;
 public:
     // create a fragment based on the velocity and position of the bullet
-    Streek(const Position & pt, Velocity v);
+    Streek(const PositionStorage & pt, VelocityStorage v);
     
     // draw it
     void render() const;
@@ -78,10 +78,10 @@ public:
 class Exhaust : public Effect
 {
 private:
-   Position ptEnd;
+   PositionStorage ptEnd;
 public:
     // create a fragment based on the velocity and position of the bullet
-    Exhaust(const Position & pt, Velocity v);
+    Exhaust(const PositionStorage & pt, VelocityStorage v);
     
     // draw it
     void render() const;

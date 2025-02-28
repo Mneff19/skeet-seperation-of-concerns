@@ -14,8 +14,8 @@
 #define WIDTH  800.0
 #define HEIGHT 800.0
 
-Position Bullet::dimensions(WIDTH, HEIGHT);
-Position Bird::dimensions(WIDTH, HEIGHT);
+PositionStorage Bullet::dimensions(WIDTH, HEIGHT);
+PositionStorage Bird::dimensions(WIDTH, HEIGHT);
 
  /*************************************
   * All the interesting work happens here, when
@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 #endif // !_WIN32
 {
    // initialize OpenGL
-   Position dimensions(WIDTH, HEIGHT);
+   PositionStorage dimensions(WIDTH, HEIGHT);
    UserInput ui(0, NULL,
       "Skeet",
       dimensions);

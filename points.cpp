@@ -48,7 +48,7 @@ double randomValue(double min, double max)
   * POINTS Constructor
   * Create a new points value
   *********************************************/
-Points::Points(const Position & pt, int value)
+Points::Points(const PositionStorage & pt, int value)
 {
    // initial position is where the bullet was last seen
    this->pt = pt;

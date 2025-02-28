@@ -28,8 +28,8 @@
 class SkeetStorage
 {
 public:
-    SkeetStorage(Position & dimensions) : dimensions(dimensions),
-        gun(Position(800.0, 0.0)), time(), score(), hitRatio(), bullseye(false) {}
+    SkeetStorage(PositionStorage & dimensions) : dimensions(dimensions),
+        gun(PositionStorage(800.0, 0.0)), time(), score(), hitRatio(), bullseye(false) {}
 
     // is the game currently playing right now?
     bool isPlaying() const { return time.isPlaying();  }
@@ -96,7 +96,7 @@ private:
     Time time;                     // how many frames have transpired since the beginning
     Score score;                   // the player's score
     HitRatio hitRatio;             // the hit ratio for the birds
-    Position dimensions;           // size of the screen
+    PositionStorage dimensions;           // size of the screen
     bool bullseye;
 };
 
@@ -104,7 +104,7 @@ private:
 class SkeetLogic
 {
 public:
-   SkeetLogic(Position & dimensions) : skeetStorage(SkeetStorage(dimensions)) {}
+   SkeetLogic(PositionStorage & dimensions) : skeetStorage(SkeetStorage(dimensions)) {}
    
    // move the gameplay by one unit of time
    void animate();
@@ -145,7 +145,7 @@ private:
 class SkeetInterface
 {
 public:
-   SkeetInterface(Position & dimensions) : skeetLogic(SkeetLogic(dimensions)) {}
+   SkeetInterface(PositionStorage & dimensions) : skeetLogic(SkeetLogic(dimensions)) {}
    // handle all user input
    void interact(const UserInput& ui);
     // output everything on the screen
