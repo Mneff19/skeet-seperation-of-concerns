@@ -31,7 +31,6 @@ using namespace std;
 #define GLUT_TEXT GLUT_BITMAP_HELVETICA_12
 #endif // _WIN32
 
-
 /************************
  * SKEET INTERACT
  * handle all user input
@@ -108,6 +107,7 @@ void SkeetInterface::drawTimer(double percent,
    double radians;
 
    GLfloat length = (GLfloat)skeetLogic.getDimensionsX();
+
    GLfloat half = length / (GLfloat)2.0;
 
    // do the background stuff

@@ -72,6 +72,7 @@ std::istream & operator >> (std::istream & in, PositionStorage & pt)
    return in;
 }
    
+
 double minimumDistance(const PositionStorage & pt1, const VelocityStorage & v1,
                        const PositionStorage & pt2, const VelocityStorage & v2)
 {
