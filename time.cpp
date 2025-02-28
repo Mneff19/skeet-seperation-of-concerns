@@ -17,7 +17,7 @@ using namespace std;
  * TIME reset
  * Set up the levels and stuff
  ************************/
-void Time::reset()
+void TimeStorage::reset()
 {
     // first level is 30 seconds in length, the first 5 are the status time
     levelLength = {0, 30, 30, 45, 45};
@@ -29,7 +29,7 @@ void Time::reset()
  * TIME IS PLAYING
  * Are we currently in a game playing time?
  ************************/
-bool Time::isPlaying() const
+bool TimeStorage::isPlaying() const
 {
     // the first 5 seconds are not game plahing time.
     return secondsInLevel() > SECONDS_STATUS;
@@ -39,7 +39,7 @@ bool Time::isPlaying() const
  * TIME PERCENT LEFT
  * What percent is left?
  ************************/
-double Time::percentLeft() const
+double TimeStorage::percentLeft() const
 {
     assert(levelNumber >= 0 && levelNumber < (int)levelLength.size());
     double framesInStatus = SECONDS_STATUS * FRAMES_PER_SECOND;
@@ -65,7 +65,7 @@ double Time::percentLeft() const
  * TIME SECONDS LEFT
  * How much time left, including status messages
  ************************/
-int Time::secondsLeft() const
+int TimeStorage::secondsLeft() const
 {
     assert(levelNumber >= 0 && levelNumber < (int)levelLength.size());
     if (isStatus())
@@ -78,7 +78,7 @@ int Time::secondsLeft() const
  * TIME IS START LEVEL
  * Os this the very start of the playing time of the leve
  ************************/
-bool Time::isStartLevel() const
+bool TimeStorage::isStartLevel() const
 {
     if (isPlaying())
         return framesLeft == FRAMES_PER_SECOND * (levelLength[levelNumber] - (int)SECONDS_STATUS) - 1;
@@ -90,7 +90,7 @@ bool Time::isStartLevel() const
  * TIME ADVANCE
  * Advance the time counter by one frame
  ************************/
-void Time::operator++(int postfix)
+void TimeStorage::operator++(int postfix)
 {
     assert(levelNumber >= 0 && levelNumber < (int)levelLength.size());
     
@@ -120,7 +120,7 @@ void Time::operator++(int postfix)
  * TIME GET TEXT
  * Get the status text
  ************************/
-string Time::getText() const
+string TimeStorage::getText() const
 {
     ostringstream sout;
 

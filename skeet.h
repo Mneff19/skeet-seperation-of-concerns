@@ -44,6 +44,7 @@ public:
    double getGunAngle() const { return gun.getAngle(); }
    void setBullseye(bool newBullseye) { bullseye = newBullseye; }
    bool isStatus() const { return time.isStatus(); }
+   std::string timeText() const { return time.getText(); }
    void incrementTime() { time++; }
    void adjustHitRatio(int value) { hitRatio.adjust(value); }
    void adjustScore(int value) { score.adjust(value); }
@@ -72,12 +73,12 @@ public:
    void newBird(Bird* newBird) { birds.push_back(newBird); }
    void newEffect(Effect* newEffect) { effects.push_back(newEffect); }
    void newPoints(Points newPoints) { points.push_back(newPoints); }
+   void resetTime() { time.reset(); }
    
    // TEMP PLEASE DO NOT KEEP:(((
    Gun getGun() const { return gun; }
    Gun* pGun() { return &gun; }
    Score getScore() const { return score; }
-   Time getTime() const { return time; }
    HitRatio getHitRatio() const { return hitRatio; }
    std::list<Points> getPoints() const { return points;}
    std::list<Points>* pPoints() { return &points;}
@@ -93,7 +94,7 @@ private:
     std::list<Bullet*> bullets;    // the bullets
     std::list<Effect*> effects;    // the fragments of a dead bird.
     std::list<Points>  points;     // point values;
-    Time time;                     // how many frames have transpired since the beginning
+    TimeStorage time;                     // how many frames have transpired since the beginning
     Score score;                   // the player's score
     HitRatio hitRatio;             // the hit ratio for the birds
     PositionStorage dimensions;           // size of the screen
@@ -119,6 +120,7 @@ public:
    double percentLeft() const { return skeetStorage.percentLeft(); }
    int secondsLeft() const { return skeetStorage.secondsLeft(); }
    bool isPlaying() const { return skeetStorage.isPlaying(); }
+   std::string timeText() const { return skeetStorage.timeText(); }
    void setBullseye(bool newBullseye) { skeetStorage.setBullseye(newBullseye); }
    void newPellet() { skeetStorage.newBullet(new Pellet(getGunAngle())); }
    void newMissile() { skeetStorage.newBullet(new Missile(getGunAngle())); }
@@ -127,11 +129,11 @@ public:
    void newSinkerBird(double radius, double speed, int points) { skeetStorage.newBird(new Sinker(radius, speed, points)); }
    void newFloaterBird(double radius, double speed, int points) { skeetStorage.newBird(new Floater(radius, speed, points)); }
    void newCrazyBird(double radius, double speed, int points) { skeetStorage.newBird(new Crazy(radius, speed, points)); }
+   void resetTime() { skeetStorage.resetTime(); }
    
    Gun getGun() const { return skeetStorage.getGun(); }
    Gun* pGun() { return skeetStorage.pGun(); }
    Score getScore() const { return skeetStorage.getScore(); }
-   Time getTime() const { return skeetStorage.getTime(); }
    HitRatio getHitRatio() const { return skeetStorage.getHitRatio(); }
    std::list<Points> getPoints() const { return skeetStorage.getPoints(); }
    std::list<Effect*> getEffects() const { return skeetStorage.getEffects(); }

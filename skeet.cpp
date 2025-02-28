@@ -41,7 +41,7 @@ void SkeetInterface::interact(const UserInput & ui)
    // reset the game
    if (skeetLogic.isGameOver() && ui.isSpace())
    {
-      skeetLogic.getTime().reset();
+      skeetLogic.resetTime();
       skeetLogic.getScore().reset();
       skeetLogic.getHitRatio().reset();
       return;
@@ -268,7 +268,7 @@ void SkeetInterface::drawLevel() const
    
    // status
    drawText(PositionStorage(10,                         skeetLogic.getDimensionsY() - 30), skeetLogic.getScore().getText()  );
-   drawText(PositionStorage(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() - 30), skeetLogic.getTime().getText()   );
+   drawText(PositionStorage(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() - 30), skeetLogic.timeText());
    drawText(PositionStorage(skeetLogic.getDimensionsX() - 110,    skeetLogic.getDimensionsY() - 30), skeetLogic.getHitRatio().getText());
 }
 
@@ -330,7 +330,7 @@ void SkeetLogic::animate()
    skeetStorage.incrementTime();
    
    // if status, then do not move the game
-   if (getTime().isStatus())
+   if (skeetStorage.isStatus())
    {
       // get rid of the bullets and the birds without changing the score
       skeetStorage.clearBirds();
@@ -420,7 +420,7 @@ void SkeetLogic::animate()
 void SkeetLogic::spawn()
 {
    double size;
-   switch (getTime().level())
+   switch (getLevel())
    {
       // in level 1 spawn big birds occasionally
       case 1:

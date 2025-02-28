@@ -18,10 +18,10 @@
  * TIME
  * Time in level, etc.
  ************************/
-class Time
+class TimeStorage
 {
 public:
-    Time() { reset(); }
+    TimeStorage() { reset(); }
     
     // which level are we in?
     int level() const  { return levelNumber; }
