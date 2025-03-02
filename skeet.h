@@ -76,14 +76,13 @@ public:
       hitRatio.reset();
       score.reset();
    }
-   HitRatioStorage* pHitRatio() { return &hitRatio; }
+    GunStorage* pGun() { return &gun; }
+    HitRatioStorage* pHitRatio() { return &hitRatio; }
    ScoreStorage* pScore() { return &score; }
    std::string hitRatioText() const { return hitRatio.getText(); }
    std::string scoreText() const { return score.getText(); }
    
    // TEMP PLEASE DO NOT KEEP:(((
-   Gun getGun() const { return gun; }
-   Gun* pGun() { return &gun; }
    std::list<Points> getPoints() const { return points;}
    std::list<Points>* pPoints() { return &points;}
    std::list<Effect*> getEffects() const { return effects;}
@@ -93,7 +92,7 @@ public:
    std::list<Bullet*>* pBullets() { return &bullets; }
 private:
 
-    Gun gun;                       // the gun
+    GunStorage gun;                       // the gun
     std::list<Bird*> birds;        // all the shootable birds
     std::list<Bullet*> bullets;    // the bullets
     std::list<Effect*> effects;    // the fragments of a dead bird.
@@ -102,6 +101,8 @@ private:
     ScoreStorage score;                   // the player's score
     HitRatioStorage hitRatio;             // the hit ratio for the birds
     PositionStorage dimensions;           // size of the screen
+    ScoreStorage scoreStorage;
+    HitRatioStorage hitStorage;
     bool bullseye;
 };
 
@@ -109,7 +110,7 @@ private:
 class SkeetLogic
 {
 public:
-   SkeetLogic(PositionStorage & dimensions) : skeetStorage(SkeetStorage(dimensions)) {}
+    SkeetLogic(PositionStorage & dimensions) : skeetStorage(SkeetStorage(dimensions)), gunLogic() {}
    
    // move the gameplay by one unit of time
    void animate();
@@ -137,8 +138,9 @@ public:
    std::string hitRatioText() const { return skeetStorage.hitRatioText(); }
    std::string scoreText() const { return skeetStorage.scoreText(); }
    
-   Gun getGun() const { return skeetStorage.getGun(); }
-   Gun* pGun() { return skeetStorage.pGun(); }
+    
+    void interactGun(int clockwise, int counterclockwise){gunLogic.interact(clockwise, counterclockwise, skeetStorage.pGun());};
+    GunStorage* pGun() {return skeetStorage.pGun();}
    std::list<Points> getPoints() const { return skeetStorage.getPoints(); }
    std::list<Effect*> getEffects() const { return skeetStorage.getEffects(); }
    std::list<Bullet*> getBullets() const { return skeetStorage.getBullets(); }
@@ -148,23 +150,30 @@ private:
    SkeetStorage skeetStorage;
    HitRatioLogic hitRatioLogic;
    ScoreLogic scoreLogic;
+    GunLogic gunLogic;
+
 };
 
 class SkeetInterface
 {
 public:
-   SkeetInterface(PositionStorage & dimensions) : skeetLogic(SkeetLogic(dimensions)) {}
+    SkeetInterface(PositionStorage & dimensions) : skeetLogic(SkeetLogic(dimensions)), gunInterface() {}
+   
    // handle all user input
    void interact(const UserInput& ui);
-    // output everything on the screen
-    void drawLevel()  const;    // output the game
-    void drawStatus() const;    // output the status information
+   
+   // output everything on the screen
+   void drawLevel();    // output the game
+   void drawStatus() const;    // output the status information
    void drawBackground(double redBack, double greenBack, double blueBack) const;
    void drawTimer(double percent,
                   double redFore, double greenFore, double blueFore,
                   double redBack, double greenBack, double blueBack) const;
    void drawBullseye(double angle) const;
+   void displayGun(GunStorage* pGun) { gunInterface.display(pGun); }
+    void reset() {skeetLogic.reset();}
    
 private:
    SkeetLogic skeetLogic;
+   GunInterface gunInterface;
 };
