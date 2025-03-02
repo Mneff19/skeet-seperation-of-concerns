@@ -18,10 +18,10 @@
 class EffectStorage : public ElementStorage
 {
 protected:
-
+   PositionStorage ptEnd;
 public:
     // create a fragment based on the velocity and position of the bullet
-    EffectStorage(const PositionStorage & pt) : ElementStorage( pt, 0.5) {}
+    EffectStorage(ElementType effectType, const PositionStorage & pt) : ElementStorage( pt, 0.5) {}
 
     void accept(ElementLogic& logic, std::list<ElementStorage*>& elementList) override;
 

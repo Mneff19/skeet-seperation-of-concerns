@@ -78,11 +78,11 @@ void BirdStorage::accept(ElementLogic& logic, std::list<ElementStorage*>& elemen
 /***************************************************************
 * BIRD STORAGE constructor
 ***************************************************************/
+// Default
 BirdStorage::BirdStorage(ElementType birdType)
 : ElementStorage(false, birdType)
 {
    double speed;
-
    switch (birdType)
    {
       case ElementType::Standard:
@@ -131,6 +131,180 @@ BirdStorage::BirdStorage(ElementType birdType)
          radius = 30.0;
          speed  = 4.5;
          value = 20;
+
+         // sinkers start on the upper part of the screen because they go down with time
+         pt.setY(randomFloat(HEIGHT * 0.50, HEIGHT * 0.95));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 3.0, 0.0));
+
+         break;
+   }
+}
+
+// specify size
+BirdStorage::BirdStorage(ElementType birdType, double radius)
+: ElementStorage(false, birdType)
+{
+   double speed;
+   switch (birdType)
+   {
+      case ElementType::Standard:
+         speed  = 5.0;
+         value = 10;
+
+         // set the position: standard birds start from the middle
+         pt.setY(randomFloat(HEIGHT * 0.25, HEIGHT * 0.75));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
+
+         break;
+      case ElementType::Floater:
+         speed  = 5.0;
+         value = 15;
+
+         // floaters start on the lower part of the screen because they go up with time
+         pt.setY(randomFloat(HEIGHT * 0.01, HEIGHT * 0.5));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(0.0, speed / 3.0));
+
+         break;
+      case ElementType::Crazy:
+         speed  = 4.5;
+         value = 30;
+
+         // crazy birds start in the middle and can go any which way
+         pt.setY(randomFloat(HEIGHT * 0.25, HEIGHT * 0.75));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
+
+         break;
+      case ElementType::Sinker:
+         speed  = 4.5;
+         value = 20;
+
+         // sinkers start on the upper part of the screen because they go down with time
+         pt.setY(randomFloat(HEIGHT * 0.50, HEIGHT * 0.95));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 3.0, 0.0));
+
+         break;
+   }
+}
+
+// specify size and speed
+BirdStorage::BirdStorage(ElementType birdType, double radius, double speed)
+: ElementStorage(false, birdType)
+{
+
+   switch (birdType)
+   {
+      case ElementType::Standard:
+         value = 10;
+
+         // set the position: standard birds start from the middle
+         pt.setY(randomFloat(HEIGHT * 0.25, HEIGHT * 0.75));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
+
+         break;
+      case ElementType::Floater:
+         value = 15;
+
+         // floaters start on the lower part of the screen because they go up with time
+         pt.setY(randomFloat(HEIGHT * 0.01, HEIGHT * 0.5));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(0.0, speed / 3.0));
+
+         break;
+      case ElementType::Crazy:
+         value = 30;
+
+         // crazy birds start in the middle and can go any which way
+         pt.setY(randomFloat(HEIGHT * 0.25, HEIGHT * 0.75));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
+
+         break;
+      case ElementType::Sinker:
+         value = 20;
+
+         // sinkers start on the upper part of the screen because they go down with time
+         pt.setY(randomFloat(HEIGHT * 0.50, HEIGHT * 0.95));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 3.0, 0.0));
+
+         break;
+   }
+}
+
+// specify size, speed, & points
+BirdStorage::BirdStorage(ElementType birdType, double radius, double speed, int value)
+: ElementStorage(false, birdType)
+{
+
+   switch (birdType)
+   {
+      case ElementType::Standard:
+
+         // set the position: standard birds start from the middle
+         pt.setY(randomFloat(HEIGHT * 0.25, HEIGHT * 0.75));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
+
+         break;
+      case ElementType::Floater:
+
+         // floaters start on the lower part of the screen because they go up with time
+         pt.setY(randomFloat(HEIGHT * 0.01, HEIGHT * 0.5));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(0.0, speed / 3.0));
+
+         break;
+      case ElementType::Crazy:
+
+         // crazy birds start in the middle and can go any which way
+         pt.setY(randomFloat(HEIGHT * 0.25, HEIGHT * 0.75));
+         pt.setX(0.0);
+
+         // set the velocity
+         v.setDx(randomFloat(speed - 0.5, speed + 0.5));
+         v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
+
+         break;
+      case ElementType::Sinker:
 
          // sinkers start on the upper part of the screen because they go down with time
          pt.setY(randomFloat(HEIGHT * 0.50, HEIGHT * 0.95));

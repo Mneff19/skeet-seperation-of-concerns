@@ -27,13 +27,12 @@ protected:
 
 public:
    BirdStorage(ElementType birdType);
+   BirdStorage(ElementType birdType, double radius);
+   BirdStorage(ElementType birdType, double radius, double speed);
+   BirdStorage(ElementType birdType, double radius, double speed, int value);
 
    // Accept visitor
    void accept(ElementLogic& logic, std::list<ElementStorage*>& elementList) override;
-
-   // Other
-
-
 
 };
 

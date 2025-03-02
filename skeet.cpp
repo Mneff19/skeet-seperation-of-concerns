@@ -259,14 +259,7 @@ void SkeetInterface::drawLevel()
    gunInterface.display(skeetLogic.pGun());
 
    // output the birds, bullets, and fragments
-   for (auto& pts : skeetLogic.getPoints())
-      pts.show();
-   for (auto effect : skeetLogic.getEffects())
-      effect->render();
-   for (auto bullet : skeetLogic.getBullets())
-      bullet->output();
-
-   for (auto element : skeetLogic.getBirds())
+   for (auto& element : skeetLogic.getElements())
       element->draw();
 
    // status
@@ -429,11 +422,13 @@ void SkeetLogic::spawn()
          size = 30.0;
          // spawns when there is nothing on the screen
          if (skeetStorage.birdsSize() == 0 && random(0, 15) == 1)
-            skeetStorage.addBirds(new Standard(size, 7.0));
+            skeetStorage.push_back(new BirdStorage(ElementType::Standard,size, 7.0));
+            // skeetStorage.addBirds(new Standard(size, 7.0));
 
          // spawn every 4 seconds
          if (random(0, 4 * 30) == 1)
-            skeetStorage.addBirds(new Standard(size, 7.0));
+            skeetStorage.push_back(new BirdStorage(ElementType::Standard,size, 7.0));
+            // skeetStorage.addBirds(new Standard(size, 7.0));
          break;
 
       // two kinds of birds in level 2
@@ -441,14 +436,17 @@ void SkeetLogic::spawn()
          size = 25.0;
          // spawns when there is nothing on the screen
          if (skeetStorage.birdsSize() == 0 && random(0, 15) == 1)
-            skeetStorage.addBirds(new Standard(size, 7.0, 12));
+            skeetStorage.push_back(new BirdStorage(ElementType::Standard,size, 7.0, 12));
+            // skeetStorage.addBirds(new Standard(size, 7.0, 12));
 
          // spawn every 4 seconds
          if (random(0, 4 * 30) == 1)
-            skeetStorage.addBirds(new Standard(size, 5.0, 12));
+            skeetStorage.push_back(new BirdStorage(ElementType::Standard,size, 5.0, 12));
+            // skeetStorage.addBirds(new Standard(size, 5.0, 12));
          // spawn every 3 seconds
          if (random(0, 3 * 30) == 1)
-            skeetStorage.addBirds(new Sinker(size));
+            skeetStorage.push_back(new BirdStorage(ElementType::Sinker,size));
+            // skeetStorage.addBirds(new Sinker(size));
          break;
 
       // three kinds of birds in level 3
@@ -456,17 +454,20 @@ void SkeetLogic::spawn()
          size = 20.0;
          // spawns when there is nothing on the screen
          if (skeetStorage.birdsSize() == 0 && random(0, 15) == 1)
-            skeetStorage.addBirds(new Standard(size, 5.0, 15));
+            // skeetStorage.addBirds(new Standard(size, 5.0, 15));
 
          // spawn every 4 seconds
          if (random(0, 4 * 30) == 1)
-            skeetStorage.addBirds(new Standard(size, 5.0, 15));
+            skeetStorage.push_back(new BirdStorage(ElementType::Standard,size, 5.0, 15));
+            // skeetStorage.addBirds(new Standard(size, 5.0, 15));
          // spawn every 4 seconds
          if (random(0, 4 * 30) == 1)
-            skeetStorage.addBirds(new Sinker(size, 4.0, 22));
+            skeetStorage.push_back(new BirdStorage(ElementType::Sinker,size, 4.0, 22));
+            // skeetStorage.addBirds(new Sinker(size, 4.0, 22));
          // spawn every 4 seconds
          if (random(0, 4 * 30) == 1)
-            skeetStorage.addBirds(new Floater(size));
+            skeetStorage.push_back(new BirdStorage(ElementType::Floater,size));
+            // skeetStorage.addBirds(new Floater(size));
          break;
 
       // three kinds of birds in level 4
@@ -474,20 +475,25 @@ void SkeetLogic::spawn()
          size = 15.0;
          // spawns when there is nothing on the screen
          if (skeetStorage.birdsSize() == 0 && random(0, 15) == 1)
-            skeetStorage.addBirds(new Standard(size, 4.0, 18));
+            skeetStorage.push_back(new BirdStorage(ElementType::Standard,size, 4.0, 18));
+            // skeetStorage.addBirds(new Standard(size, 4.0, 18));
 
          // spawn every 4 seconds
          if (random(0, 4 * 30) == 1)
-            skeetStorage.addBirds(new Standard(size, 4.0, 18));
+            skeetStorage.push_back(new BirdStorage(ElementType::Standard,size, 4.0, 18));
+            // skeetStorage.addBirds(new Standard(size, 4.0, 18));
          // spawn every 4 seconds
          if (random(0, 4 * 30) == 1)
-            skeetStorage.addBirds(new Sinker(size, 3.5, 25));
+            skeetStorage.push_back(new BirdStorage(ElementType::Sinker,size, 3.5, 25));
+            // skeetStorage.addBirds(new Sinker(size, 3.5, 25));
          // spawn every 4 seconds
          if (random(0, 4 * 30) == 1)
-            skeetStorage.addBirds(new Floater(size, 4.0, 25));
+            skeetStorage.push_back(new BirdStorage(ElementType::Standard,size, 4.0, 25));
+            // skeetStorage.addBirds(new Floater(size, 4.0, 25));
          // spawn every 4 seconds
          if (random(0, 4 * 30) == 1)
-            skeetStorage.addBirds(new Crazy(size));
+            skeetStorage.push_back(new BirdStorage(ElementType::Standard,size));
+            // skeetStorage.addBirds(new Crazy(size));
          break;
 
       default:

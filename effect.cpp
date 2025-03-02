@@ -133,7 +133,7 @@ void EffectLogic::draw(const EffectStorage &effect)
     if (effect.isDead())
         return;
 
-    EffectType type = effect.getEffectType();
+    ElementType type = effect.getType();
     if (type == ElementType::Fragment)
     {
         glBegin(GL_TRIANGLE_FAN);
