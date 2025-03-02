@@ -57,32 +57,32 @@ double random(double min, double max)
  * BULLET STORAGE constructor
  *********************************************/
 BulletStorage::BulletStorage(double angle, ElementType elementType)
-: ElementStorage(false), bulletType(bulletType)
+: ElementStorage(false, elementType)
 {
    double speed;
 
    switch (elementType)
    {
-      case BulletType::Pellet:
+      case ElementType::Pellet:
          speed = 15.0;
          radius = 1.0;
          value = 1;
          break;
-      case BulletType::Bomb:
+      case ElementType::Bomb:
          speed = 10.0;
          radius = 4.0;
          value = 4;
          timeToDie = 60;
          break;
-      case BulletType::Missile:
+      case ElementType::Missile:
          speed = 10.0;
          radius = 1.0;
          value = 3;
          break;
 
-      
+
       assert(elementType != ElementType::Shrapnel);
-      
+
       // set the initial position
       pt.setX(WIDTH - 1.0);
       pt.setY(1.0);
@@ -93,7 +93,7 @@ BulletStorage::BulletStorage(double angle, ElementType elementType)
       v.setDy(speed * sin(angle));
       assert(v.getDx() <= 0.0);
       assert(v.getDy() >= 0.0);
-      
+
    }
 
 }
@@ -126,23 +126,23 @@ BulletStorage::BulletStorage(BulletStorage &bomb)
 void BulletLogic::advance(ElementStorage &element, std::list<ElementStorage*> &elementList) override
 {
    switch (element.elementType)
-   {   
+   {
       case ElementType::Bomb:
          // kill if it has been around too long
          timeToDie--;
          if (!timeToDie)
             kill();
       break;
-   
+
       case ElementType::Shrapnel:
          // kill if it has been around too long
          timeToDie--;
          if (!timeToDie)
             kill();
-         
+
          // Add a streak
          elements.push_back(new Effect(ElementType::Streek, element.getPosition(), element.getVelocity()));
-   
+
          break;
       case ElementType::Missile:
          // kill if it has been around too long

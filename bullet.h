@@ -50,14 +50,14 @@ public:
 class BulletLogic : public ElementLogic
 {
 public:
-   virtual void advance(ElementStorage &element, std::list<ELementStorage*> &elementList) override {}
+   virtual void advance(ElementStorage &element, std::list<ElementStorage*> &elementList) override {}
    virtual void turn(double angle) override {}
 
    void death(std::list<ElementStorage *>* bullets);
 
    void input(ElementStorage &element, bool isUp, bool isDown, bool isB)
    {
-      if (element.elementType == ElementType::Missile)
+      if (element.getType() == ElementType::Missile)
       {
          if (isUp)
             v.turn(0.04);
