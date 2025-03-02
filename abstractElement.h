@@ -34,13 +34,20 @@ enum ElementType
    Points   = 11,
 };
 
+// Forward Declarations
+class ElementLogic;
+class BirdStorage;
+class BulletStorage;
+class EffectStorage;
+class PointsStorage;
+
 class ElementStorage
 {
-protected:
+public:
    // CONSTRUCTORS
 
    // element Constructor
-   ElementStorage(bool dead, ElementType elementType) : dead(dead) {}
+   ElementStorage(bool dead, ElementType elementType) : dead(dead), elementType(elementType) {}
 
    // Effect Constructor
    ElementStorage
@@ -63,7 +70,7 @@ protected:
    // METHODS
 public:
    // Getters
-   bool isDead()                   const { return dead;        }
+   virtual bool isDead()           const { return dead;        }
    PositionStorage getPosition()   const { return pt;          }
    VelocityStorage getVelocity()   const { return v;           }
    double getPositionX()           const { return pt.getX();   }
@@ -79,11 +86,20 @@ public:
    void operator=(const VelocityStorage & rhs) { v = rhs;          }
 
    // Other Methods
-   void addInertia()                           { pt.add(v);        }
+   void multiplyV(double multiplicationFactor)          { v *= multiplicationFactor;      }
+   void multiplyPoints(double multiplicationFactor)     { value *= multiplicationFactor;  }
+   void addInertia()                                    { pt.add(v);                      }
+   void addDy(double dy)                                { v.addDy(dy);                    }
+   void addDx(double dx)                                { v.addDx(dx);                    }
 
+   // Virtual Methods
+   virtual void accept(ElementLogic& logic, std::list<ElementStorage*>& elementList) = 0; // The Visitor pattern's "accept" method
+   virtual ~ElementStorage() {} // Virtual destructor
 
 };
 
+
+// Abstract Visitor
 class ElementLogic
 {
 public:
@@ -93,14 +109,19 @@ public:
          element.getPositionY() < -element.getRadius() || element.getPositionY() >= HEIGHT + element.getRadius());
    }
 
-   virtual void advance(ElementStorage &element,
-                  std::list<ElementStorage*> &elementList) = 0;
-   virtual void turn(double radians)                       = 0;
+   virtual void turn(ElementStorage &element, double radians) = 0;
+   virtual void input(ElementStorage &element, bool isUp, bool isDown, bool isB) = 0;
+
+   // Specific overloads for each type
+   virtual void advance(BirdStorage   &bird,   std::list<ElementStorage*>& elementList) = 0;
+   virtual void advance(BulletStorage &bullet, std::list<ElementStorage*>& elementList) = 0;
+   virtual void advance(EffectStorage &effect, std::list<ElementStorage*>& elementList) = 0;
+   virtual void advance(PointsStorage &points, std::list<ElementStorage*> &elementList) = 0;
 
 };
 
 class ElementInterface
 {
-   virtual void draw(ElementStorage &element) = 0;
+   virtual void draw(ElementStorage &element) const = 0;
 
 };

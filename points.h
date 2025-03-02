@@ -17,13 +17,35 @@
   * POINTS
   * Points graphic drawn on the screen
   *********************************************/
-class Points : public ElementStorage
+class PointsStorage : public ElementStorage
 {
 public:
-   Points(const PositionStorage& pt, int value);
+   PointsStorage(const PositionStorage& pt, int value);
+
+   // Accept Visitor
+   void accept(ElementLogic& logic, std::list<ElementStorage*>& elementList) override;
+
    void show() const;
-   void update();
-   bool isDead() const {return age <= 0.0; }
+
+   bool isDead() const override {return age <= 0.0; }
 private:
 
 };
+
+class PointsLogic : public ElementLogic
+{
+public:
+
+   virtual void advance(PointsStorage &points, std::list<ElementStorage*> &elementList);
+   // Specific overloads for each type
+   virtual void advance(BirdStorage   &bird,   std::list<ElementStorage*>& elementList) {}
+   virtual void advance(BulletStorage &bullet, std::list<ElementStorage*>& elementList) {}
+   virtual void advance(EffectStorage &effect, std::list<ElementStorage*>& elementList) {}
+};
+
+class PointsInterface : public ElementInterface
+{
+public:
+   virtual void draw(ElementStorage &element) const override;
+
+}

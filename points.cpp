@@ -7,8 +7,9 @@
  *    Inert point values on the screen.
  ************************************************************************/
 
- #include "points.h"
- #include <cassert>
+#include "points.h"
+#include "abstractElement.h"
+#include <cassert>
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
@@ -26,7 +27,7 @@
 #ifdef _WIN32
 #include <stdio.h>
 #include <stdlib.h>
-#include <GL/glut.h>         // OpenGL library we copied 
+#include <GL/glut.h>         // OpenGL library we copied
 #define _USE_MATH_DEFINES
 #include <math.h>
 #define GLUT_TEXT GLUT_BITMAP_HELVETICA_12
@@ -44,11 +45,20 @@ double randomValue(double min, double max)
    return num;
 }
 
+/************************************************************************
+ * POINTS STORAGE ACCEPT
+ * Accepts a visitor
+ *************************************************************************/
+ void PointsStorage::accept(ElementLogic& logic, std::list<ElementStorage*>& elementList) {
+     logic.advance(*this, elementList); // Call the EffectStorage-specific advance overload
+ }
+
+
  /*********************************************
   * POINTS Constructor
   * Create a new points value
   *********************************************/
-Points::Points(const PositionStorage & pt, int value)
+PointsStorage::PointsStorage(const PositionStorage & pt, int value)
 {
    // initial position is where the bullet was last seen
    this->pt = pt;
@@ -72,24 +82,25 @@ Points::Points(const PositionStorage & pt, int value)
  * POINTS SHOW
  * Draw a points value on the screen
  *********************************************/
-void Points::show() const
+void PointsInterface::draw(ElementStorage &element) const
 {
-   if (value == 0)
+   assert(element.getType() == ElementType::Points);
+   if (element.getValue() == 0)
       return;
 
    void* pFont = GLUT_TEXT;
 
    // set the color
-   GLfloat red   = (value <= 0.0 ? 1.0 : 0.0) * age;
-   GLfloat green = (value <= 0.0 ? 0.0 : 1.0) * age;
+   GLfloat red   = (element.getValue() <= 0.0 ? 1.0 : 0.0) * element.getAge();
+   GLfloat green = (element.getValue() <= 0.0 ? 0.0 : 1.0) * element.getAge();
    GLfloat blue  = 0.0;
    glColor3f(red, green, blue);
 
    // specify the position
-   glRasterPos2f((GLfloat)pt.getX(), (GLfloat)pt.getY());
+   glRasterPos2f((GLfloat)element.getPositionX(), (GLfloat)element.getPositionY());
 
    // draw the digits
-   int number = (value > 0 ? value : -value);
+   int number = (element.getValue() > 0 ? element.getValue() : -element.getValue());
    if (number / 10 != 0)
       glutBitmapCharacter(pFont, (char)(number / 10) + '0');
    glutBitmapCharacter(pFont, (char)(number % 10) + '0');
@@ -99,10 +110,14 @@ void Points::show() const
  * POINTS UPDATE
  * Move the points value on the screen
  *********************************************/
-void Points::update()
+void PointsLogic::advance(PointsStorage &points, std::list<ElementStorage*> &elementList)
 {
-   v.addDx(randomValue(-0.15, 0.15));
-   v.addDy(randomValue(-0.15, 0.15));
-   pt += v;
+   assert(points.getType() == ElementType::Points);
+
+   points.addDx(randomValue(-0.15, 0.15));
+   points.addDy(randomValue(-0.15, 0.15));
+
+   points.addInertia();
+
    age -= 0.01;
 }

@@ -60,6 +60,15 @@ double randomFloat(double min, double max)
    return num;
 }
 
+/***************************************************************
+* BIRD STORAGE ACCEPT
+* Accepts a visitor
+***************************************************************/
+void BirdStorage::accept(ElementLogic& logic, std::list<ElementStorage*>& elementList) {
+   // Second Dispatch
+   logic.advance(*this, elementList);
+}
+
 /***************************************************************/
 /***************************************************************/
 /*                         CONSTRUCTORS                         */
@@ -140,7 +149,7 @@ BirdStorage::BirdStorage(ElementType birdType)
  /*                            ADVANCE                          */
  /***************************************************************/
  /***************************************************************/
-void BirdLogic::advance(BirdStorage &bird)
+void BirdLogic::advance(BirdStorage &bird, std::list<ElementStorage*> &elementList)
 {
    switch (bird.getType())
    {

@@ -101,18 +101,18 @@ public:
 private:
 
 
-    GunStorage gun;                       // the gun
-    std::list<Bird*> birds;        // all the shootable birds
-    std::list<Bullet*> bullets;    // the bullets
-    std::list<Effect*> effects;    // the fragments of a dead bird.
-    std::list<Points>  points;     // point values;
-    TimeStorage time;                     // how many frames have transpired since the beginning
-    ScoreStorage score;                   // the player's score
-    HitRatioStorage hitRatio;             // the hit ratio for the birds
-    PositionStorage dimensions;           // size of the screen
-    ScoreStorage scoreStorage;
-    HitRatioStorage hitStorage;
-    bool bullseye;
+   GunStorage gun;                       // the gun
+   std::list<Bird*> birds;        // all the shootable birds
+   std::list<Bullet*> bullets;    // the bullets
+   std::list<Effect*> effects;    // the fragments of a dead bird.
+   std::list<Points>  points;     // point values;
+   TimeStorage time;                     // how many frames have transpired since the beginning
+   ScoreStorage score;                   // the player's score
+   HitRatioStorage hitRatio;             // the hit ratio for the birds
+   PositionStorage dimensions;           // size of the screen
+   ScoreStorage scoreStorage;
+   HitRatioStorage hitStorage;
+   bool bullseye;
 };
 
 
@@ -149,10 +149,8 @@ public:
    std::string hitRatioText() const { return skeetStorage.hitRatioText(); }
    std::string scoreText() const { return skeetStorage.scoreText(); }
 
-
-
-    void interactGun(int clockwise, int counterclockwise){gunLogic.interact(clockwise, counterclockwise, skeetStorage.pGun());};
-    GunStorage* pGun() {return skeetStorage.pGun();}
+   void interactGun(int clockwise, int counterclockwise){gunLogic.interact(clockwise, counterclockwise, skeetStorage.pGun());};
+   GunStorage* pGun() {return skeetStorage.pGun();}
 
    std::list<Points> getPoints() const { return skeetStorage.getPoints(); }
    std::list<Effect*> getEffects() const { return skeetStorage.getEffects(); }
@@ -166,6 +164,8 @@ private:
    ScoreLogic scoreLogic;
 
    GunLogic gunLogic;
+
+   ElementLogic elementLogic;
 
 
 };

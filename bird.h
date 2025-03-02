@@ -11,6 +11,11 @@
 #include "abstractElement.h"
 #include "position.h"
 
+// Forward Declarations
+class BulletStorage;
+class EffectStorage;
+class PointsStorage;
+
 
 /**********************
  * BIRD
@@ -23,13 +28,10 @@ protected:
 public:
    BirdStorage(ElementType birdType);
 
+   // Accept visitor
+   void accept(ElementLogic& logic, std::list<ElementStorage*>& elementList) override;
+
    // Other
-   void multiplyV(double multiplicationFactor)          { v *= multiplicationFactor;      }
-   void multiplyPoints(double multiplicationFactor)     { value *= multiplicationFactor;  }
-   void addDy(double dy)                                { v.addDy(dy);                    }
-   void addDx(double dx)                                { v.addDx(dx);                    }
-
-
 
 
 
@@ -39,9 +41,13 @@ class BirdLogic : public ElementLogic
 {
 public:
 
+   // Concrete Visitor implementations
+   virtual void advance(BirdStorage   &bird, std::list<ElementStorage*>& elementList);
 
-   // special functions
-   void advance(BirdStorage &bird);
+   // Unneeded, but unsure how to better apply visitor pattern
+   virtual void advance(BulletStorage &bullet, std::list<ElementStorage*>& elementList) {};
+   virtual void advance(EffectStorage &effect, std::list<ElementStorage*>& elementList) {};
+   virtual void advance(PointsStorage &points, std::list<ElementStorage*> &elementList) {};
 };
 
 class BirdInterface : public ElementInterface

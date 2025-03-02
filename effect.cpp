@@ -10,6 +10,7 @@
 #include "effect.h"
 #include <cassert>
 #include "abstractElement.h"
+#include "position.h"
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
@@ -45,7 +46,14 @@ double random(double min, double max)
    return num;
 }
 
-
+/************************************************************************
+ * EFFECT STORAGE ACCEPT
+ * Accepts a visitor
+ *************************************************************************/
+void EffectStorage::accept(ElementLogic &logic, std::list<ElementStorage*>& elementList) {
+   // Second Dispatch
+   logic.advance(*this, elementList);
+}
 
 /***************************************************************/
 /***************************************************************/
@@ -53,20 +61,38 @@ double random(double min, double max)
 /***************************************************************/
 /***************************************************************/
 
+EffectStorage::EffectStorage(ElementType effectType, const PositionStorage &pt, const VelocityStorage &velocity)
+: ElementStorage(true, effectType)
+{
+   switch (elementType)
+   {
+      case ElementType::Fragment:
+         // the velocity is a random kick plus the velocity of the thing that died
+         this->v.setDx(v.getDx() * 0.5 + random(-6.0, 6.0));
+         this->v.setDy(v.getDy() * 0.5 + random(-6.0, 6.0));
+
+         // age
+         age = random(0.4, 1.0);
+
+         // size
+         radius = random(1.0, 2.5);
+         break;
+
+      case ElementType::Streek:
+         break;
+
+      case ElementType::Exhaust:
+         break;
+   }
+
+}
+
 /************************************************************************
  * FRAGMENT constructor
  *************************************************************************/
 Fragment::Fragment(const PositionStorage & pt, const VelocityStorage & v) : Effect(pt)
 {
-   // the velocity is a random kick plus the velocity of the thing that died
-   this->v.setDx(v.getDx() * 0.5 + random(-6.0, 6.0));
-   this->v.setDy(v.getDy() * 0.5 + random(-6.0, 6.0));
-   
-    // age
-    age = random(0.4, 1.0);
-    
-    // size
-    size = random(1.0, 2.5);
+
 }
 
 /************************************************************************
@@ -77,7 +103,7 @@ Streek::Streek(const PositionStorage & pt, VelocityStorage v) : Effect(pt)
    ptEnd = pt;
    v *= -1.0;
    ptEnd += v;
-   
+
     // age
     age = 0.5;
 }
@@ -104,35 +130,35 @@ Exhaust::Exhaust(const PositionStorage & pt, VelocityStorage v) : Effect(pt)
 void EffectLogic::draw(const EffectStorage &effect)
 {
     // Don't render if the effect is dead
-    if (effect.isDead()) 
-        return; 
+    if (effect.isDead())
+        return;
 
     EffectType type = effect.getEffectType();
-    if (type == EffectType::Fragment)
+    if (type == ElementType::Fragment)
     {
         glBegin(GL_TRIANGLE_FAN);
             glColor3f((GLfloat)effect.getAge(), (GLfloat)effect.getAge(), (GLfloat)effect.getAge());
 
-            glVertex2f((GLfloat)(effect.getPosition().getX() - effect.getSize()), 
+            glVertex2f((GLfloat)(effect.getPosition().getX() - effect.getSize()),
                        (GLfloat)(effect.getPosition().getY() - effect.getSize()));
-            glVertex2f((GLfloat)(effect.getPosition().getX() + effect.getSize()), 
+            glVertex2f((GLfloat)(effect.getPosition().getX() + effect.getSize()),
                        (GLfloat)(effect.getPosition().getY() - effect.getSize()));
-            glVertex2f((GLfloat)(effect.getPosition().getX() + effect.getSize()), 
+            glVertex2f((GLfloat)(effect.getPosition().getX() + effect.getSize()),
                        (GLfloat)(effect.getPosition().getY() + effect.getSize()));
-            glVertex2f((GLfloat)(effect.getPosition().getX() - effect.getSize()), 
+            glVertex2f((GLfloat)(effect.getPosition().getX() - effect.getSize()),
                        (GLfloat)(effect.getPosition().getY() + effect.getSize()));
 
             glColor3f(1.0f, 1.0f, 1.0f); // Reset color
             glEnd();
     }
-    else if (type == EffectType::Exhaust || type == EffectType::Exhaust)
+    else if (type == ElementType::Exhaust || type == ElementType::Exhaust)
     {
             glBegin(GL_LINES);
             glColor3f((GLfloat)effect.getAge(), (GLfloat)effect.getAge(), (GLfloat)effect.getAge());
 
-            glVertex2f((GLfloat)effect.getPosition().getX(), 
+            glVertex2f((GLfloat)effect.getPosition().getX(),
                        (GLfloat)effect.getPosition().getY());
-            glVertex2f((GLfloat)effect.getEndPosition().getX(), 
+            glVertex2f((GLfloat)effect.getEndPosition().getX(),
                        (GLfloat)effect.getEndPosition().getY());
 
             glColor3f(1.0f, 1.0f, 1.0f); // Reset color
@@ -169,7 +195,7 @@ void EffectLogic::draw(const EffectStorage &effect)
         default:
             break;
     }
- 
+
     // out of bounds checker
     if (isOutOfBounds(effect))
     {

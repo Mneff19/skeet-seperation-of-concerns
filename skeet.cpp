@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include "skeet.h"
+#include "abstractElement.h"
 using namespace std;
 
 
@@ -346,18 +347,14 @@ void SkeetLogic::animate()
    spawn();
 
    // move the birds and the bullets
-   for (auto bird : getBirds())
-   {
+   // Element List
+   std::list<ElementStorage*> elementList = skeetStorage.getElements();
 
-      element->advance();
-      hitRatioLogic.adjust(element->isDead() ? -1 : 0, skeetStorage.pHitRatio());
-   }
-   for (auto bullet : getBullets())
-      bullet->move(skeetStorage.pEffects());
-   for (auto effect : getEffects())
-      effect->fly();
-   for (auto it = skeetStorage.getPointsStart(); it != skeetStorage.getPointsEnd(); ++it)
-      it->update();
+   for (auto& element : elementList)
+      {
+         // First Dispatch
+          element->accept(elementLogic, elementList);
+      }
 
    // hit detection
    for (auto element : getBirds())
@@ -368,52 +365,54 @@ void SkeetLogic::animate()
                              bullet->getPosition(),  bullet->getVelocity()))
          {
             for (int i = 0; i < 25; i++)
-               skeetStorage.newEffect(new Fragment(bullet->getPosition(), bullet->getVelocity()));
+               elementList.push_back( new EffectStorage(ElementType::Fragment, bullet->getPosition(), bullet->getVelocity()));
+               // skeetStorage.newEffect(new Fragment(bullet->getPosition(), bullet->getVelocity()));
             element->kill();
             bullet->kill();
             hitRatioLogic.adjust(1, skeetStorage.pHitRatio());
-            bullet->setValue(-(element->getPoints()));
-            element->setPoints(0);
+            bullet->setValue(-(element->getValue()));
+            element->setValue(0);
          }
 
-   // remove the zombie birds
-   for (auto it = skeetStorage.getBirdsStart(); it != skeetStorage.getBirdsEnd();)
-      if ((*it)->isDead())
+   // Remove Zombies
+   for (auto element : elementList)
+   {
+      ElementType type = element->getType();
+      if (element->isDead())
       {
-         if ((*it)->getPoints())
-            skeetStorage.newPoints(Points((*it)->getPosition(), (*it)->getPoints()));
-         scoreLogic.adjust((*it)->getPoints(), skeetStorage.pScore());
-         it = skeetStorage.removeBird(it);
+         // Birds
+         if (type == ElementType::Standard || type == ElementType::Sinker ||
+            type == ElementType::Floater || type == ElementType::Crazy)
+         {
+            if (element->getValue())
+               skeetStorage.push_back(new PointsStorage(element->getPosition(), element->getValue()));
+            scoreLogic.adjust(element->getValue(), skeetStorage.pScore());
+            skeetStorage.remove(element);
+
+         }
+
+         // Bullets
+         if (type == ElementType::Pellet || type == ElementType::Bomb ||
+            type == ElementType::Shrapnel || type == ElementType::Missile)
+         {
+            element->death(skeetStorage.pBullets());
+            int value = -element->getValue();
+            skeetStorage.push_back(new PointsStorage(element->getPosition(), value));
+            scoreLogic.adjust(value, skeetStorage.pScore());
+            skeetStorage.removeBullet(element);
+         }
+
+         // Effects
+         if (type == ElementType::Fragment || type == ElementType::Streek||
+            type == ElementType::Exhaust)
+         {
+            skeetStorage.removeEffect(element);
+         }
+
+         // Points
+         skeetStorage.removePoints(element);
       }
-      else
-         ++it;
-
-   // remove zombie bullets
-   for (auto it = skeetStorage.getBulletsStart(); it != skeetStorage.getBulletsEnd(); )
-      if ((*it)->isDead())
-      {
-         (*it)->death(skeetStorage.pBullets());
-         int value = -(*it)->getValue();
-         skeetStorage.addPoints(Points((*it)->getPosition(), value));
-         scoreLogic.adjust(value, skeetStorage.pScore());
-         it = skeetStorage.removeBullet(it);
-      }
-      else
-         ++it;
-
-   // remove zombie fragments
-   for (auto it = skeetStorage.getEffectsStart(); it !=  skeetStorage.getEffectsEnd();)
-      if ((*it)->isDead())
-         it = skeetStorage.removeEffect(it);
-      else
-         ++it;
-
-   // remove expired points
-   for (auto it = skeetStorage.getPointsStart(); it != skeetStorage.getPointsEnd();)
-      if ((*it).isDead())
-         it = skeetStorage.removePoints(it);
-      else
-         ++it;
+   }
 }
 
 /************************

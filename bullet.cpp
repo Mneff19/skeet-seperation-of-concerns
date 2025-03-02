@@ -54,6 +54,16 @@ double random(double min, double max)
 }
 
 /*********************************************
+ * BULLET STORAGE ACCEPT
+ * Accepts a visitor
+ *********************************************/
+void BulletStorage::accept(ElementLogic &logic, std::list<ElementStorage*>& elementList)
+{
+   // Second Dispatch
+   logic.advance(*this, elementList);
+}
+
+/*********************************************
  * BULLET STORAGE constructor
  *********************************************/
 BulletStorage::BulletStorage(double angle, ElementType elementType)
@@ -99,7 +109,7 @@ BulletStorage::BulletStorage(double angle, ElementType elementType)
 }
 
 BulletStorage::BulletStorage(BulletStorage &bomb)
-: ElementStorage(false), bulletType(ElementType::Shrapnel)
+: ElementStorage(false, ElementType::Shrapnel)
 {
    assert(bomb.getType() == ElementType::Bomb);
 
@@ -123,13 +133,13 @@ BulletStorage::BulletStorage(BulletStorage &bomb)
 /*********************************************
  * BULLET LOGIC ADVANCE
  *********************************************/
-void BulletLogic::advance(ElementStorage &element, std::list<ElementStorage*> &elementList) override
+void BulletLogic::advance(BulletStorage &bullet, std::list<ElementStorage*> &elementList)
 {
-   switch (element.elementType)
+   switch (bullet.getType())
    {
       case ElementType::Bomb:
          // kill if it has been around too long
-         timeToDie--;
+         bullet.timeToDie--;
          if (!timeToDie)
             kill();
       break;
@@ -141,20 +151,20 @@ void BulletLogic::advance(ElementStorage &element, std::list<ElementStorage*> &e
             kill();
 
          // Add a streak
-         elements.push_back(new Effect(ElementType::Streek, element.getPosition(), element.getVelocity()));
+         elementList.push_back(new Effect(ElementType::Streek, element.getPosition(), element.getVelocity()));
 
          break;
       case ElementType::Missile:
          // kill if it has been around too long
-         effects->push_back(new Exhaust(pt, v));
+         effectList->push_back(new Exhaust(pt, v));
          break;
    }
 
    // add inertia
-   element.addInertia()
+   bullet.addInertia();
    // out of bounds checker
-   if (isOutOfBounds())
-      kill();
+   if (isOutOfBounds(bullet))
+      bullet.kill();
 
 }
 
@@ -173,10 +183,10 @@ void BulletLogic::advance(ElementStorage &element, std::list<ElementStorage*> &e
  * BOMB DEATH
  * Bombs have a tendency to explode!
  *********************************************/
-void Bomb::death(std::list<Bullet*>* bullets)
+void BulletLogic::death(std::list<ElementStorage*>* elementList)
 {
    for (int i = 0; i < 20; i++)
-      bullets->push_back(new Shrapnel(*this));
+      elementList->push_back(new BulletStorage(*this));
 }
 
 
@@ -198,31 +208,31 @@ inline void glVertexPoint(const PositionStorage& point)
 /*********************************************
  * BULLET INTERFACE DRAW
  *********************************************/
-void BulletInterface::Draw(ElementStorage &element)
+void BulletInterface::draw(ElementStorage &element)
 {
    if (!element.isDead())
    {
       switch (element.elementType)
       {
-         case ElementType::Pelet:
-           drawDot(pt, 3.0, 1.0, 1.0, 0.0);
+         case ElementType::Pellet:
+           drawDot(element.getPosition(), 3.0, 1.0, 1.0, 0.0);
            break;
          case ElementType::Bomb:
             // Bomb actually has a gradient to cut out the harsh edges
-            drawDot(pt, radius + 2.0, 0.50, 0.50, 0.00);
-            drawDot(pt, radius + 1.0, 0.75, 0.75, 0.00);
-            drawDot(pt, radius + 0.0, 0.87, 0.87, 0.00);
-            drawDot(pt, radius - 1.0, 1.00, 1.00, 0.00);
+            drawDot(element.getPosition(), element.getRadius() + 2.0, 0.50, 0.50, 0.00);
+            drawDot(element.getPosition(), element.getRadius() + 1.0, 0.75, 0.75, 0.00);
+            drawDot(element.getPosition(), element.getRadius() + 0.0, 0.87, 0.87, 0.00);
+            drawDot(element.getPosition(), element.getRadius() - 1.0, 1.00, 1.00, 0.00);
             break;
          case ElementType::Shrapnel:
-            drawDot(pt, radius, 1.0, 1.0, 0.0);
+            drawDot(element.getPosition(), element.getRadius(), 1.0, 1.0, 0.0);
             break;
          case ElementType::Missile:
             // missile is a line with a dot at the end so it looks like fins.
-            PositionStorage ptNext(pt);
-            ptNext.add(v);
-            drawLine(pt, ptNext, 1.0, 1.0, 0.0);
-            drawDot(pt, 3.0, 1.0, 1.0, 1.0);
+            PositionStorage ptNext(element.getPosition());
+            ptNext.add(element.getVelocity());
+            drawLine(element.getPosition(), ptNext, 1.0, 1.0, 0.0);
+            drawDot(element.getPosition(), 3.0, 1.0, 1.0, 1.0);
             break;
       }
    }

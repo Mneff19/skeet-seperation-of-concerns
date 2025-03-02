@@ -28,41 +28,39 @@ public:
    BulletStorage(double angle, ElementType bulletType);
    BulletStorage(BulletStorage &bomb);
 
-   // setters
-
-
-   // getters
-
-
-   // special functions
-   virtual void death(std::list<BulletStorage *>* bullets) {}
-   virtual void output() = 0;
-   virtual void input(bool isUp, bool isDown, bool isB) {}
-   virtual void move(std::list<Effect*>* effects);
-
+   // Accept Visitor
+   void accept(ElementLogic& logic, std::list<ElementStorage*>& elementList) override;
 
 };
 
 /*********************
  * BULLET LOGIC
+ * Concrete Visitor
  * The logic for all bullets
  **********************/
 class BulletLogic : public ElementLogic
 {
 public:
-   virtual void advance(ElementStorage &element, std::list<ElementStorage*> &elementList) override {}
-   virtual void turn(double angle) override {}
 
-   void death(std::list<ElementStorage *>* bullets);
+   // Specific overloads for each type
+   virtual void advance(BulletStorage &bullet, std::list<ElementStorage*>& elementList) override;
+   // Unneeded
+   virtual void advance(BirdStorage   &bird,   std::list<ElementStorage*>& elementList) override {}
+   virtual void advance(EffectStorage &effect, std::list<ElementStorage*>& elementList) override {}
+   virtual void advance(PointsStorage &points, std::list<ElementStorage*> &elementList) override {}
 
-   void input(ElementStorage &element, bool isUp, bool isDown, bool isB)
+   virtual void turn(ElementStorage &element, double angle) override { element.v.turn(angle); }
+
+   virtual void death(std::list<ElementStorage *>* elementList);
+
+   virtual void input(ElementStorage &element, bool isUp, bool isDown, bool isB) override
    {
       if (element.getType() == ElementType::Missile)
       {
          if (isUp)
-            v.turn(0.04);
+            turn(element, 0.04);
          if (isDown)
-            v.turn(-0.04);
+            turn(element, -0.04);
       }
    }
 

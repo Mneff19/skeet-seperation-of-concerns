@@ -12,7 +12,7 @@
 #include "position.h"
 
 /**********************
- * Effect: 
+ * Effect:
  * Stuff that is not interactive
  **********************/
 class EffectStorage : public ElementStorage
@@ -23,8 +23,10 @@ public:
     // create a fragment based on the velocity and position of the bullet
     EffectStorage(const PositionStorage & pt) : ElementStorage( pt, 0.5) {}
 
+    void accept(ElementLogic& logic, std::list<ElementStorage*>& elementList) override;
+
     // it is dead when age goes to 0.0
-    bool isDead() const { return age <= 0.0; }
+    bool isDead() const override { return age <= 0.0; }
 };
 
 
