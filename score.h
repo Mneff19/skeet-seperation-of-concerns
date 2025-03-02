@@ -14,12 +14,11 @@
  * STATUS
  * How well the player is doing
  **********************/
-class Status
+class StatusStorage
 {
 public:
-    Status() {}
+    StatusStorage() {}
     virtual std::string getText() const = 0;
-    virtual void adjust(int value) = 0;
     virtual void reset() = 0;
 };
 
@@ -27,29 +26,44 @@ public:
  * SCORE
  * Points earned vs lost
  **********************/
-class Score : public Status
+class ScoreStorage : public StatusStorage
 {
 public:
-    Score() { reset(); }
+    ScoreStorage() { reset(); }
     std::string getText() const;
-    void adjust(int value) { points += value; }
     void reset() { points = 0; }
+   void adjustPoints(int value) { points += value; }
 private:
     int points;
+};
+
+class ScoreLogic
+{
+public:
+   ScoreLogic() {};
+   void adjust(int value, ScoreStorage* scoreStorage) { scoreStorage->adjustPoints(value); };
 };
 
 /**********************
  * HIT RATIO
  * Bird hit ratio
  **********************/
-class HitRatio : public Status
+class HitRatioStorage : public StatusStorage
 {
 public:
-    HitRatio()  { reset(); }
+    HitRatioStorage()  { reset(); }
     std::string getText() const;
-    void adjust(int value);
     void reset() { numKilled = numMissed = 0; }
+   void incrementNumKilled() { numKilled++; }
+   void incrementNumMissed() { numMissed++; }
 private:
     int numKilled;
     int numMissed;
+};
+
+class HitRatioLogic
+{
+public:
+   HitRatioLogic() {};
+   void adjust(int value, HitRatioStorage* hitRatioStorage);
 };

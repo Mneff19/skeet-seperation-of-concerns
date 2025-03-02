@@ -47,8 +47,6 @@ public:
    bool isStatus() const { return time.isStatus(); }
    std::string timeText() const { return time.getText(); }
    void incrementTime() { time++; }
-   void adjustHitRatio(int value) { hitRatio.adjust(value); }
-   void adjustScore(int value) { score.adjust(value); }
    void clearBullets() { bullets.clear(); }
    void clearBirds() { birds.clear(); }
    void clearEffects() { effects.clear(); }
@@ -79,16 +77,21 @@ public:
 
    void newEffect(Effect* newEffect) { effects.push_back(newEffect); }
    void newPoints(Points newPoints) { points.push_back(newPoints); }
-   void resetTime() { time.reset(); }
 
-   // Lists
-   std::list<BirdStorage*> getBirds() const { return birds;}
+   void reset() {
+      time.reset();
+      hitRatio.reset();
+      score.reset();
+   }
+   HitRatioStorage* pHitRatio() { return &hitRatio; }
+   ScoreStorage* pScore() { return &score; }
+   std::string hitRatioText() const { return hitRatio.getText(); }
+   std::string scoreText() const { return score.getText(); }
+
 
    // TEMP PLEASE DO NOT KEEP:(((
    Gun getGun() const { return gun; }
    Gun* pGun() { return &gun; }
-   Score getScore() const { return score; }
-   HitRatio getHitRatio() const { return hitRatio; }
    std::list<Points> getPoints() const { return points;}
    std::list<Points>* pPoints() { return &points;}
    std::list<Effect*> getEffects() const { return effects;}
@@ -105,8 +108,8 @@ private:
     // std::list<Effect*>      effects;   // the fragments of a dead bird.
     std::list<Points>       points;       // point values;
     TimeStorage time;                     // how many frames have transpired since the beginning
-    Score score;                   // the player's score
-    HitRatio hitRatio;             // the hit ratio for the birds
+    ScoreStorage score;                   // the player's score
+    HitRatioStorage hitRatio;             // the hit ratio for the birds
     PositionStorage dimensions;           // size of the screen
     bool bullseye;
 };
@@ -136,19 +139,17 @@ public:
    void newMissile() { skeetStorage.newBullet(new Missile(getGunAngle())); }
    void newBomb() { skeetStorage.newBullet(new Bomb(getGunAngle())); }
 
-   void newStandardBird() { skeetStorage.newBird( new BirdStorage(BirdType::Standard) ); }
-   void newSinkerBird()   { skeetStorage.newBird( new BirdStorage(BirdType::Sinker)   ); }
-   void newFloaterBird()  { skeetStorage.newBird( new BirdStorage(BirdType::Floater)  ); }
-   void newCrazyBird()    { skeetStorage.newBird( new BirdStorage(BirdType::Crazy)    ); }
-   // std::list<BirdStorage*>::const_iterator getBirdsStart() const { return skeetStorage.getBirdsStart(); }
-   // std::list<BirdStorage*>::const_iterator getBirdsEnd() const   { return skeetStorage.getBirdsEnd();   }
+   void newStandardBird(double radius, double speed, int points) { skeetStorage.newBird(new Standard(radius, speed, points)); }
+   void newSinkerBird(double radius, double speed, int points) { skeetStorage.newBird(new Sinker(radius, speed, points)); }
+   void newFloaterBird(double radius, double speed, int points) { skeetStorage.newBird(new Floater(radius, speed, points)); }
+   void newCrazyBird(double radius, double speed, int points) { skeetStorage.newBird(new Crazy(radius, speed, points)); }
+   void reset() { skeetStorage.reset(); }
+   std::string hitRatioText() const { return skeetStorage.hitRatioText(); }
+   std::string scoreText() const { return skeetStorage.scoreText(); }
 
-   void resetTime() { skeetStorage.resetTime(); }
 
    Gun getGun() const { return skeetStorage.getGun(); }
    Gun* pGun() { return skeetStorage.pGun(); }
-   Score getScore() const { return skeetStorage.getScore(); }
-   HitRatio getHitRatio() const { return skeetStorage.getHitRatio(); }
    std::list<Points> getPoints() const { return skeetStorage.getPoints(); }
    std::list<Effect*> getEffects() const { return skeetStorage.getEffects(); }
    std::list<Bullet*> getBullets() const { return skeetStorage.getBullets(); }
@@ -157,8 +158,9 @@ public:
 private:
    SkeetStorage skeetStorage;
 
-   // Logics
-   BirdLogic birdLogic;
+   HitRatioLogic hitRatioLogic;
+   ScoreLogic scoreLogic;
+
 };
 
 class SkeetInterface

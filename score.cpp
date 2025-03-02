@@ -15,7 +15,7 @@ using namespace std;
  * SCORE GET TEXT
  * Get the status text
  ************************/
-string Score::getText() const
+string ScoreStorage::getText() const
 {
     ostringstream sout;
     sout << "Score:  " << points;
@@ -26,7 +26,7 @@ string Score::getText() const
  * HIT RATIO  GET TEXT
  * Get the status text
  ************************/
-string HitRatio::getText() const
+string HitRatioStorage::getText() const
 {
     ostringstream sout;
     sout << "Birds:   ";
@@ -44,10 +44,10 @@ string HitRatio::getText() const
  * HIT RATIO  ADJUST
  * Adjust the score for a bird hit (positive) or missed (negative)
  ************************/
-void HitRatio::adjust(int value)
+void HitRatioLogic::adjust(int value, HitRatioStorage* hitRatioStorage)
 {
     if (value > 0)
-        numKilled++;
+       hitRatioStorage->incrementNumKilled();
     else if (value < 0)
-        numMissed++;
+       hitRatioStorage->incrementNumMissed();
 }

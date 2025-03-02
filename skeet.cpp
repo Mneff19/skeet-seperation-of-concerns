@@ -41,10 +41,8 @@ void SkeetInterface::interact(const UserInput & ui)
    // reset the game
    if (skeetLogic.isGameOver() && ui.isSpace())
    {
-      // Move into skeetlgic method skeetLogic::reset()
-      skeetLogic.resetTime();
-      skeetLogic.getScore().reset();
-      skeetLogic.getHitRatio().reset();
+
+      skeetLogic.reset();
       return;
    }
 
@@ -272,9 +270,9 @@ void SkeetInterface::drawLevel() const
       birdInterface.draw(*bird);
 
    // status
-   drawText(PositionStorage(10,                         skeetLogic.getDimensionsY() - 30), skeetLogic.getScore().getText()  );
+   drawText(PositionStorage(10,                         skeetLogic.getDimensionsY() - 30), skeetLogic.scoreText()  );
    drawText(PositionStorage(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() - 30), skeetLogic.timeText());
-   drawText(PositionStorage(skeetLogic.getDimensionsX() - 110,    skeetLogic.getDimensionsY() - 30), skeetLogic.getHitRatio().getText());
+   drawText(PositionStorage(skeetLogic.getDimensionsX() - 110,    skeetLogic.getDimensionsY() - 30), skeetLogic.hitRatioText());
 }
 
 /************************
@@ -293,7 +291,7 @@ void SkeetInterface::drawStatus() const
 
       // draw end of game status
       drawText(PositionStorage(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() / 2 - 10),
-               skeetLogic.getScore().getText());
+               skeetLogic.scoreText());
    }
    else
    {
@@ -351,8 +349,9 @@ void SkeetLogic::animate()
    // move the birds and the bullets
    for (auto bird : getBirds())
    {
-      birdLogic.advance(*bird);
-      skeetStorage.adjustHitRatio(bird->isDead() ? -1 : 0);
+
+      element->advance();
+      hitRatioLogic.adjust(element->isDead() ? -1 : 0, skeetStorage.pHitRatio());
    }
    for (auto bullet : getBullets())
       bullet->move(skeetStorage.pEffects());
@@ -373,7 +372,7 @@ void SkeetLogic::animate()
                skeetStorage.newEffect(new Fragment(bullet->getPosition(), bullet->getVelocity()));
             element->kill();
             bullet->kill();
-            skeetStorage.adjustHitRatio(1);
+            hitRatioLogic.adjust(1, skeetStorage.pHitRatio());
             bullet->setValue(-(element->getPoints()));
             element->setPoints(0);
          }
@@ -384,7 +383,7 @@ void SkeetLogic::animate()
       {
          if ((*it)->getPoints())
             skeetStorage.newPoints(Points((*it)->getPosition(), (*it)->getPoints()));
-         skeetStorage.adjustScore((*it)->getPoints());
+         scoreLogic.adjust((*it)->getPoints(), skeetStorage.pScore());
          it = skeetStorage.removeBird(it);
       }
       else
@@ -397,7 +396,7 @@ void SkeetLogic::animate()
          (*it)->death(skeetStorage.pBullets());
          int value = -(*it)->getValue();
          skeetStorage.addPoints(Points((*it)->getPosition(), value));
-         skeetStorage.adjustScore(value);
+         scoreLogic.adjust(value, skeetStorage.pScore());
          it = skeetStorage.removeBullet(it);
       }
       else
