@@ -9,6 +9,7 @@
 
 #include <cassert>
 #include "bird.h"
+#include "abstractElement.h"
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
@@ -68,19 +69,17 @@ double randomFloat(double min, double max)
 /***************************************************************
 * BIRD STORAGE constructor
 ***************************************************************/
-BirdStorage::BirdStorage(BirdType birdType) : birdType(birdType), dead(false)
+BirdStorage::BirdStorage(ElementType birdType)
+: ElementStorage(false, birdType)
 {
-   // initialize variables
-   double radius;
    double speed;
-   int    points;
 
    switch (birdType)
    {
-      case BirdType::Standard:
+      case ElementType::Standard:
          radius = 25.0;
          speed  = 5.0;
-         points = 10;
+         value = 10;
 
          // set the position: standard birds start from the middle
          pt.setY(randomFloat(HEIGHT * 0.25, HEIGHT * 0.75));
@@ -91,10 +90,10 @@ BirdStorage::BirdStorage(BirdType birdType) : birdType(birdType), dead(false)
          v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
 
          break;
-      case BirdType::Floater:
+      case ElementType::Floater:
          radius = 30.0;
          speed  = 5.0;
-         points = 15;
+         value = 15;
 
          // floaters start on the lower part of the screen because they go up with time
          pt.setY(randomFloat(HEIGHT * 0.01, HEIGHT * 0.5));
@@ -105,10 +104,10 @@ BirdStorage::BirdStorage(BirdType birdType) : birdType(birdType), dead(false)
          v.setDy(randomFloat(0.0, speed / 3.0));
 
          break;
-      case BirdType::Crazy:
+      case ElementType::Crazy:
          radius = 30.0;
          speed  = 4.5;
-         points = 30;
+         value = 30;
 
          // crazy birds start in the middle and can go any which way
          pt.setY(randomFloat(HEIGHT * 0.25, HEIGHT * 0.75));
@@ -119,10 +118,10 @@ BirdStorage::BirdStorage(BirdType birdType) : birdType(birdType), dead(false)
          v.setDy(randomFloat(-speed / 5.0, speed / 5.0));
 
          break;
-      case BirdType::Sinker:
+      case ElementType::Sinker:
          radius = 30.0;
          speed  = 4.5;
-         points = 20;
+         value = 20;
 
          // sinkers start on the upper part of the screen because they go down with time
          pt.setY(randomFloat(HEIGHT * 0.50, HEIGHT * 0.95));
@@ -134,12 +133,6 @@ BirdStorage::BirdStorage(BirdType birdType) : birdType(birdType), dead(false)
 
          break;
    }
-
-   // set the points
-   this->points = points;
-
-   // set the size
-   this->radius = radius;
 }
 
  /***************************************************************/
@@ -149,9 +142,9 @@ BirdStorage::BirdStorage(BirdType birdType) : birdType(birdType), dead(false)
  /***************************************************************/
 void BirdLogic::advance(BirdStorage &bird)
 {
-   switch (bird.getBirdType())
+   switch (bird.getType())
    {
-      case BirdType::Standard:
+      case ElementType::Standard:
          // small amount of drag
          bird.multiplyV(0.995);
 
@@ -166,7 +159,7 @@ void BirdLogic::advance(BirdStorage &bird)
          }
 
          break;
-      case BirdType::Floater:
+      case ElementType::Floater:
          // large amount of drag
          bird.multiplyV(0.990);
 
@@ -184,7 +177,7 @@ void BirdLogic::advance(BirdStorage &bird)
          }
 
          break;
-      case BirdType::Crazy:
+      case ElementType::Crazy:
          // How the crazy bird moves, every half a second it changes direciton
          // erratic turns eery half a second or so
          if (randomInt(0, 15) == 0)
@@ -198,7 +191,7 @@ void BirdLogic::advance(BirdStorage &bird)
 
 
          break;
-      case BirdType::Sinker:
+      case ElementType::Sinker:
          // gravity
          bird.addDy(-0.07);
 
@@ -264,23 +257,23 @@ void drawDisk(const PositionStorage& center, double radius,
  * DRAW
  * Draw a bird
  *************************************************************************/
-void BirdInterface::draw(BirdStorage &bird)
+void BirdInterface::draw(BirdStorage &bird) const
 {
    if (!bird.isDead())
    {
-      switch (bird.getBirdType())
+      switch (bird.getType())
       {
-         case BirdType::Standard:
+         case ElementType::Standard:
             // Draw a standard bird: blue center and white outline
             drawDisk(bird.getPosition(), bird.getRadius() - 0.0, 1.0, 1.0, 1.0); // white outline
             drawDisk(bird.getPosition(), bird.getRadius() - 3.0, 0.0, 0.0, 1.0); // blue center
             break;
-         case BirdType::Floater:
+         case ElementType::Floater:
             // Draw a floating bird: white center and blue outline
             drawDisk(bird.getPosition(), bird.getRadius() - 0.0, 0.0, 0.0, 1.0); // blue outline
             drawDisk(bird.getPosition(), bird.getRadius() - 4.0, 1.0, 1.0, 1.0); // white center
             break;
-         case BirdType::Crazy:
+         case ElementType::Crazy:
             // Draw a crazy bird: concentric circles in a course gradient
             drawDisk(bird.getPosition(), bird.getRadius() * 1.0, 0.0, 0.0, 1.0); // bright blue outside
             drawDisk(bird.getPosition(), bird.getRadius() * 0.8, 0.2, 0.2, 1.0);
@@ -288,7 +281,7 @@ void BirdInterface::draw(BirdStorage &bird)
             drawDisk(bird.getPosition(), bird.getRadius() * 0.4, 0.6, 0.6, 1.0);
             drawDisk(bird.getPosition(), bird.getRadius() * 0.2, 0.8, 0.8, 1.0); // almost white inside
             break;
-         case BirdType::Sinker:
+         case ElementType::Sinker:
             // Draw a sinker bird: black center and dark blue outline
             drawDisk(bird.getPosition(), bird.getRadius() - 0.0, 0.0, 0.0, 0.8);
             drawDisk(bird.getPosition(), bird.getRadius() - 4.0, 0.0, 0.0, 0.0);

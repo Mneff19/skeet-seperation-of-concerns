@@ -10,13 +10,14 @@
 
 #pragma once
 
+#include "abstractElement.h"
 #include "position.h"
 
  /*********************************************
   * POINTS
   * Points graphic drawn on the screen
   *********************************************/
-class Points
+class Points : public ElementStorage
 {
 public:
    Points(const PositionStorage& pt, int value);
@@ -24,8 +25,5 @@ public:
    void update();
    bool isDead() const {return age <= 0.0; }
 private:
-   PositionStorage pt;
-   VelocityStorage v;
-   int value;
-   float age;
+
 };

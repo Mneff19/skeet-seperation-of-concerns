@@ -9,6 +9,7 @@
 
 #include "effect.h"
 #include <cassert>
+#include "abstractElement.h"
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
@@ -96,121 +97,83 @@ Exhaust::Exhaust(const PositionStorage & pt, VelocityStorage v) : Effect(pt)
 
 /***************************************************************/
 /***************************************************************/
-/*                           RENDER                            */
+/*                           DRAW                              */
 /***************************************************************/
 /***************************************************************/
 
-/************************************************************************
- * FRAGMENT RENDER
- * Draw the fragment on the screen
- *************************************************************************/
-void Fragment::render() const
+void EffectLogic::draw(const EffectStorage &effect)
 {
-    // Do nothing if we are already dead
-    if (isDead())
-        return;
-    
-    // Draw this sucker
-    glBegin(GL_TRIANGLE_FAN);
-    
-    // the color is a function of age - fading to black
-    glColor3f((GLfloat)age, (GLfloat)age, (GLfloat)age);
-    
-    // draw the fragment
-    glVertex2f((GLfloat)(pt.getX() - size), (GLfloat)(pt.getY() - size));
-    glVertex2f((GLfloat)(pt.getX() + size), (GLfloat)(pt.getY() - size));
-    glVertex2f((GLfloat)(pt.getX() + size), (GLfloat)(pt.getY() + size));
-    glVertex2f((GLfloat)(pt.getX() - size), (GLfloat)(pt.getY() + size));
-    glColor3f((GLfloat)1.0 /* red % */, (GLfloat)1.0 /* green % */, (GLfloat)1.0 /* blue % */);
-    glEnd();
-}
+    // Don't render if the effect is dead
+    if (effect.isDead()) 
+        return; 
 
-/************************************************************************
- * STREEK RENDER
- * Draw the shrapnel streek on the screen
- *************************************************************************/
-void Streek::render() const
-{
-    // Do nothing if we are already dead
-    if (isDead())
-        return;
-    
-    // Draw this sucker
-    glBegin(GL_LINES);
-    glColor3f((GLfloat)age, (GLfloat)age, (GLfloat)age);
+    EffectType type = effect.getEffectType();
+    if (type == EffectType::Fragment)
+    {
+        glBegin(GL_TRIANGLE_FAN);
+            glColor3f((GLfloat)effect.getAge(), (GLfloat)effect.getAge(), (GLfloat)effect.getAge());
 
-    // Draw the actual line
-    glVertex2f((GLfloat)pt.getX(), (GLfloat)pt.getY());
-    glVertex2f((GLfloat)ptEnd.getX(), (GLfloat)ptEnd.getY());
+            glVertex2f((GLfloat)(effect.getPosition().getX() - effect.getSize()), 
+                       (GLfloat)(effect.getPosition().getY() - effect.getSize()));
+            glVertex2f((GLfloat)(effect.getPosition().getX() + effect.getSize()), 
+                       (GLfloat)(effect.getPosition().getY() - effect.getSize()));
+            glVertex2f((GLfloat)(effect.getPosition().getX() + effect.getSize()), 
+                       (GLfloat)(effect.getPosition().getY() + effect.getSize()));
+            glVertex2f((GLfloat)(effect.getPosition().getX() - effect.getSize()), 
+                       (GLfloat)(effect.getPosition().getY() + effect.getSize()));
 
-    glColor3f((GLfloat)1.0 /* red % */, (GLfloat)1.0 /* green % */, (GLfloat)1.0 /* blue % */);
-    glEnd();
-}
+            glColor3f(1.0f, 1.0f, 1.0f); // Reset color
+            glEnd();
+    }
+    else if (type == EffectType::Exhaust || type == EffectType::Exhaust)
+    {
+            glBegin(GL_LINES);
+            glColor3f((GLfloat)effect.getAge(), (GLfloat)effect.getAge(), (GLfloat)effect.getAge());
 
-/************************************************************************
- * EXHAUST RENDER
- * Draw a missile exhaust on the screen
- *************************************************************************/
-void Exhaust::render() const
-{
-   // Do nothing if we are already dead
-   if (isDead())
-       return;
-   
-   // Draw this sucker
-   glBegin(GL_LINES);
-   glColor3f((GLfloat)age, (GLfloat)age, (GLfloat)age);
+            glVertex2f((GLfloat)effect.getPosition().getX(), 
+                       (GLfloat)effect.getPosition().getY());
+            glVertex2f((GLfloat)effect.getEndPosition().getX(), 
+                       (GLfloat)effect.getEndPosition().getY());
 
-   // Draw the actual line
-   glVertex2f((GLfloat)pt.getX(), (GLfloat)pt.getY());
-   glVertex2f((GLfloat)ptEnd.getX(), (GLfloat)ptEnd.getY());
-
-   glColor3f((GLfloat)1.0 /* red % */, (GLfloat)1.0 /* green % */, (GLfloat)1.0 /* blue % */);
-   glEnd();
+            glColor3f(1.0f, 1.0f, 1.0f); // Reset color
+            glEnd();
+    }
 }
 
 /***************************************************************/
-/***************************************************************/
-/*                            FLY                              */
-/***************************************************************/
-/***************************************************************/
-
-/************************************************************************
- * FRAGMENT FLY
- * Move the fragment on the screen
- *************************************************************************/
-void Fragment :: fly()
+ /***************************************************************/
+ /*                            ADVANCE                          */
+ /***************************************************************/
+ /***************************************************************/
+ void EffectLogic::advance(EffectStorage &effect)
 {
-    // move it forward with inertia (no gravity)
-    pt += v;
-    
-    // increase the age so it fades away
-    age -= 0.02;
-    size *= 0.95;
-}
-
-/************************************************************************
- * STREEK FLY
- * The streek will just fade away
- *************************************************************************/
-void Streek :: fly()
-{
-    // move it forward with inertia (no gravity)
-//    pt += v;
-    
-   // increase the age so it fades away
-   age -= 0.10;
-}
-
-/************************************************************************
- * EXHAUST FLY
- * The exhaust will just fade away
- *************************************************************************/
-void Exhaust :: fly()
-{
-   // move it forward with inertia (no gravity)
-//   pt += v;
-    
-   // increase the age so it fades away
-   age -= 0.025;
+    switch (effect.getEffectType())
+    {
+        case EffectType::Fragment:
+        {
+            effect.getPosition() += effect.getVelocity(); // Apply inertia
+            effect.setAge(effect.getAge() - 0.02);
+            effect.setSize(effect.getSize() * 0.95);
+            break;
+        }
+        case EffectType::Streek:
+        {
+            effect.setAge(effect.getAge() - 0.10);
+            break;
+        }
+        case EffectType::Exhaust:
+        {
+            effect.setAge(effect.getAge() - 0.025);
+            break;
+        }
+        default:
+            break;
+    }
+ 
+    // out of bounds checker
+    if (isOutOfBounds(effect))
+    {
+       effect.kill();
+       effect.multiplyPoints(-1); // points go negative when it is missed!
+    }
 }

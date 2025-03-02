@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "abstractElement.h"
 #include "position.h"
 #include "uiInteract.h"
 #include "bird.h"
@@ -97,11 +98,12 @@ public:
    std::list<Bullet*>* pBullets() { return &bullets; }
 private:
 
-    Gun gun;                       // the gun
-    std::list<BirdStorage*> birds;           // logic for the birds
-    std::list<Bullet*>      bullets;    // the bullets
-    std::list<Effect*>      effects;    // the fragments of a dead bird.
-    std::list<Points>       points;     // point values;
+    Gun gun;                              // the gun
+    std::list<ElementStorage*> elements;  // The elements
+    // std::list<BirdStorage*> birds;     // logic for the birds
+    // std::list<Bullet*>      bullets;   // the bullets
+    // std::list<Effect*>      effects;   // the fragments of a dead bird.
+    std::list<Points>       points;       // point values;
     TimeStorage time;                     // how many frames have transpired since the beginning
     Score score;                   // the player's score
     HitRatio hitRatio;             // the hit ratio for the birds
@@ -162,9 +164,11 @@ private:
 class SkeetInterface
 {
 public:
+   // inherited method draw()
    SkeetInterface(PositionStorage & dimensions) : skeetLogic(SkeetLogic(dimensions)) {}
    // handle all user input
    void interact(const UserInput& ui);
+private:
     // output everything on the screen
     void drawLevel()  const;    // output the game
     void drawStatus() const;    // output the status information

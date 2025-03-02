@@ -41,6 +41,7 @@ void SkeetInterface::interact(const UserInput & ui)
    // reset the game
    if (skeetLogic.isGameOver() && ui.isSpace())
    {
+      // Move into skeetlgic method skeetLogic::reset()
       skeetLogic.resetTime();
       skeetLogic.getScore().reset();
       skeetLogic.getHitRatio().reset();
@@ -48,6 +49,7 @@ void SkeetInterface::interact(const UserInput & ui)
    }
 
    // gather input from the interface
+   // START skeetLogicInput
    skeetLogic.pGun()->interact(ui.isUp() + ui.isRight(), ui.isDown() + ui.isLeft());
 
    // a pellet can be shot at any time
@@ -65,11 +67,12 @@ void SkeetInterface::interact(const UserInput & ui)
    // send movement information to all the bullets. Only the missile cares.
    for (auto bullet : skeetLogic.getBullets())
       bullet->input(ui.isUp() + ui.isRight(), ui.isDown() + ui.isLeft(), ui.isB());
-
+   // END input
 
    // move the stuff
    skeetLogic.animate();
 
+   // call skeetDraw
    // output the stuff
    if (skeetLogic.isPlaying())
       drawLevel();
