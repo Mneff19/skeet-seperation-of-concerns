@@ -14,15 +14,37 @@
  * GUN
  * The gun at the bottom of the screen
  *********************************************/
-class Gun
+class GunStorage
 {
 public:
-   Gun(const PositionStorage & pt) : angle(0.78 /* 45 degrees */), pt(pt) {}  // 45 degrees initially
-   void display() const;
-   void interact(int clockwise, int counterclockwise);
+   GunStorage(const PositionStorage & pt) : angle(0.78 /* 45 degrees */), pt(pt) {}  // 45 degrees initially
    double getAngle() const { return angle; }
+   PositionStorage getPt() {return pt;}
+   void incrementAngle(double amount);
+   void decrementAngle(double amount);
+   void setAngle(double newAngle) { angle = newAngle; }
    
 private:
    double angle;
    PositionStorage pt;
 };
+
+/*********************************************
+ * GUN LOGIC
+ * Handles the gun's interactions
+ *********************************************/
+class GunLogic
+{
+public:
+   GunLogic() {}
+   void interact(int clockwise, int counterclockwise, GunStorage* pGun);
+   
+};
+
+class GunInterface {
+public:
+   void display(GunStorage* pGun) ;
+};
+
+
+

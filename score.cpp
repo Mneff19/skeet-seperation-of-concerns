@@ -30,7 +30,6 @@ string HitRatioStorage::getText() const
 {
     ostringstream sout;
     sout << "Birds:   ";
-    
     // compute the percentage when possible
     if (numMissed + numKilled)
         sout << (numKilled * 100 / (numMissed + numKilled)) << "%";
