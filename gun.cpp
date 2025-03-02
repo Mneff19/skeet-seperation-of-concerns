@@ -98,28 +98,43 @@ void drawRectangle(const PositionStorage& pt,
   * GUN : DISPLAY
   * Display the gun on the screen
   *********************************************/
-void Gun::display() const
+void GunInterface::display(GunStorage* pGun)
 {
-   drawRectangle(pt, M_PI_2 - angle, 10.0, 100.0, 1.0, 1.0, 1.0);
+   drawRectangle(pGun->getPt(), M_PI_2 - pGun->getAngle(), 10.0, 100.0, 1.0, 1.0, 1.0);
 }
+void GunStorage::decrementAngle(double amount)
+{
+   angle -= amount;
+    if (angle < 0.0)
+        angle = 0.0;
+}
+
+void GunStorage::incrementAngle(double amount)
+{
+   angle += amount;
+    if (angle > M_PI_2)
+        angle = M_PI_2;
+}
+
 
 /*********************************************
  * GUN : INTERACT
  * Move the gun
  *********************************************/
-void Gun::interact(int clockwise, int counterclockwise)
+void GunLogic::interact(int clockwise, int counterclockwise, GunStorage* pGun)
 {
    // move it
    if (clockwise > 0)
    {
-      angle += (clockwise > 10) ? 0.06 : 0.025;
-      if (angle > M_PI_2)
-         angle = M_PI_2;
+       pGun->incrementAngle((clockwise > 10) ? 0.06 : 0.025);
+      if (pGun->getAngle() > M_PI_2)
+          pGun->setAngle(M_PI_2);
    }
    if (counterclockwise > 0)
    {
-      angle -= (clockwise > 10) ? 0.06 : 0.025;
-      if (angle < 0.0)
-         angle = 0.0;
+       pGun->decrementAngle((clockwise > 10) ? 0.06 : 0.025);
+      if (pGun->getAngle() < 0.0)
+         pGun->setAngle(0.0);
    }
 }
+

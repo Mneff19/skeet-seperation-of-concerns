@@ -31,7 +31,6 @@ using namespace std;
 #define GLUT_TEXT GLUT_BITMAP_HELVETICA_12
 #endif // _WIN32
 
-
 /************************
  * SKEET INTERACT
  * handle all user input
@@ -46,7 +45,7 @@ void SkeetInterface::interact(const UserInput & ui)
    }
 
    // gather input from the interface
-   skeetLogic.pGun()->interact(ui.isUp() + ui.isRight(), ui.isDown() + ui.isLeft());
+   skeetLogic.interactGun(ui.isUp() + ui.isRight(), ui.isDown() + ui.isLeft());
 
    // a pellet can be shot at any time
    if (ui.isSpace())
@@ -108,6 +107,7 @@ void SkeetInterface::drawTimer(double percent,
    double radians;
 
    GLfloat length = (GLfloat)skeetLogic.getDimensionsX();
+
    GLfloat half = length / (GLfloat)2.0;
 
    // do the background stuff
@@ -242,7 +242,7 @@ void SkeetInterface::drawBullseye(double angle) const
  * SKEET DRAW LEVEL
  * output everything that will be on the screen
  ************************/
-void SkeetInterface::drawLevel() const
+void SkeetInterface::drawLevel() 
 {
    // output the background
    drawBackground(skeetLogic.getLevel() * .1, 0.0, 0.0);
@@ -252,7 +252,7 @@ void SkeetInterface::drawLevel() const
       drawBullseye(skeetLogic.getGunAngle());
 
    // output the gun
-   skeetLogic.getGun().display();
+   gunInterface.display(skeetLogic.pGun());
          
    // output the birds, bullets, and fragments
    for (auto& pts : skeetLogic.getPoints())
@@ -263,7 +263,6 @@ void SkeetInterface::drawLevel() const
       bullet->output();
    for (auto element : skeetLogic.getBirds())
       element->draw();
-   
    // status
    drawText(PositionStorage(10,                         skeetLogic.getDimensionsY() - 30), skeetLogic.scoreText()  );
    drawText(PositionStorage(skeetLogic.getDimensionsX() / 2 - 30, skeetLogic.getDimensionsY() - 30), skeetLogic.timeText());
